@@ -11,14 +11,14 @@
       You need to define a required configuration setting (`{{ item }}`).
   when: "vars[item] == ''"
   with_items:
-    - joplin_server_uid
-    - joplin_server_gid
-    - joplin_server_hostname
-    - joplin_server_path_prefix
-    - joplin_server_environment_variable_database_hostname
-    - joplin_server_container_network
+    - privatebin_uid
+    - privatebin_gid
+    - privatebin_hostname
+    - privatebin_path_prefix
+    - privatebin_environment_variable_database_hostname
+    - privatebin_container_network
 
-- when: joplin_server_container_labels_traefik_enabled | bool
+- when: privatebin_container_labels_traefik_enabled | bool
   block:
     - name: Fail if required PrivateBin Traefik settings not defined
       ansible.builtin.fail:
@@ -26,14 +26,14 @@
           You need to define a required configuration setting (`{{ item }}`).
       when: "vars[item] == ''"
       with_items:
-        - joplin_server_container_labels_traefik_hostname
-        - joplin_server_container_labels_traefik_path_prefix
+        - privatebin_container_labels_traefik_hostname
+        - privatebin_container_labels_traefik_path_prefix
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
-    # Knowing that `joplin_server_container_labels_traefik_path_prefix` does not end with a slash
+    # Knowing that `privatebin_container_labels_traefik_path_prefix` does not end with a slash
     # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
-    - name: Fail if joplin_server_container_labels_traefik_path_prefix ends with a slash
+    - name: Fail if privatebin_container_labels_traefik_path_prefix ends with a slash
       ansible.builtin.fail:
         msg: >-
-          joplin_server_container_labels_traefik_path_prefix (`{{ joplin_server_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/joplin`).
-      when: "joplin_server_container_labels_traefik_path_prefix != '/' and joplin_server_container_labels_traefik_path_prefix[-1] == '/'"
+          privatebin_container_labels_traefik_path_prefix (`{{ privatebin_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/joplin`).
+      when: "privatebin_container_labels_traefik_path_prefix != '/' and privatebin_container_labels_traefik_path_prefix[-1] == '/'"

@@ -7,24 +7,24 @@
 
 - name: Check existence of PrivateBin systemd service
   ansible.builtin.stat:
-    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ joplin_server_identifier }}.service"
-  register: joplin_server_service_stat
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ privatebin_identifier }}.service"
+  register: privatebin_service_stat
 
-- when: joplin_server_service_stat.stat.exists | bool
+- when: privatebin_service_stat.stat.exists | bool
   block:
     - name: Ensure PrivateBin systemd service is stopped
       ansible.builtin.service:
-        name: "{{ joplin_server_identifier }}"
+        name: "{{ privatebin_identifier }}"
         state: stopped
         enabled: false
         daemon_reload: true
 
     - name: Ensure PrivateBin systemd service doesn't exist
       ansible.builtin.file:
-        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ joplin_server_identifier }}.service"
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ privatebin_identifier }}.service"
         state: absent
 
     - name: Ensure PrivateBin base directory doesn't exist
       ansible.builtin.file:
-        path: "{{ joplin_server_base_path }}"
+        path: "{{ privatebin_base_path }}"
         state: absent
