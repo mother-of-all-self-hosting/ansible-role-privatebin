@@ -46,7 +46,7 @@ traefik.http.routers.{{ privatebin_identifier }}.tls={{ privatebin_container_lab
 traefik.http.routers.{{ privatebin_identifier }}.tls.certResolver={{ privatebin_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
-traefik.http.services.{{ privatebin_identifier }}.loadbalancer.server.port={{ privatebin_environment_variable_http_port }}
+traefik.http.services.{{ privatebin_identifier }}.loadbalancer.server.port={{ privatebin_container_http_port }}
 {% endif %}
 
 {{ privatebin_container_labels_additional_labels }}

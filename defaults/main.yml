@@ -37,7 +37,7 @@ privatebin_container_image_registry_prefix_upstream_default: docker.io/
 privatebin_container_image_force_pull: "{{ privatebin_container_image.endswith(':latest') }}"
 
 # The port number in the container
-privatebin_environment_variable_http_port: 8080
+privatebin_container_http_port: 8080
 
 privatebin_environment_variable_base_url: "https://{{ privatebin_hostname }}{{ '' if privatebin_path_prefix == '/' else privatebin_path_prefix }}"
 
