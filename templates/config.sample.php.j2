@@ -204,9 +204,9 @@ dir = PATH "data"
 [model]
 class = GoogleCloudStorage
 [model_options]
-bucket = "my-private-bin"
-prefix = "pastes"
-uniformacl = false
+bucket = {{ privatebin_config_model_gcs_bucket }}
+prefix = {{ privatebin_config_model_gcs_prefix }}
+uniformacl = {{ privatebin_config_model_gcs_uniformacl | to_json }}
 
 {% elif privatebin_config_model == 'MySQL' %}
 [model]

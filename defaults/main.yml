@@ -303,6 +303,11 @@ privatebin_config_trafic_creators: ""
 # Valid values: Filesystem, GoogleCloudStorage, MySQL, SQLite, PostgreSQL, S3
 privatebin_config_model: Filesystem
 
+# Specify model configurations for GoogleCloudStorage
+privatebin_config_model_gcs_bucket: 'my-private-bin'
+privatebin_config_model_gcs_prefix: 'pastes'
+privatebin_config_model_gcs_uniformacl: false
+
 # Specify model configurations for MySQL
 privatebin_database_mysql_hostname: ''
 privatebin_database_mysql_username: 'privatebin'
