@@ -14,7 +14,7 @@ privatebin_enabled: true
 privatebin_identifier: privatebin
 privatebin_base_path: "{{ privatebin_identifier }}"
 
-privatebin_version: latest
+privatebin_version: 1.7.6
 
 privatebin_uid: ''
 privatebin_gid: ''
@@ -29,7 +29,7 @@ privatebin_scheme: https
 # This value must either be `/` or not end with a slash (e.g. `/privatebin`).
 privatebin_path_prefix: /
 
-privatebin_container_image: "{{ privatebin_container_image_registry_prefix }}joplin/server:{{ privatebin_container_image_tag }}"
+privatebin_container_image: "{{ privatebin_container_image_registry_prefix }}privatebin/pdo:{{ privatebin_container_image_tag }}"
 privatebin_container_image_tag: "{{ privatebin_version }}"
 privatebin_container_image_registry_prefix: "{{ privatebin_container_image_registry_prefix_upstream }}"
 privatebin_container_image_registry_prefix_upstream: "{{ privatebin_container_image_registry_prefix_upstream_default }}"
