@@ -11,7 +11,7 @@
 
 privatebin_enabled: true
 
-privatebin_identifier: joplin-server
+privatebin_identifier: privatebin
 privatebin_base_path: "{{ privatebin_identifier }}"
 
 # There are only "latest" or "beta" tags.
@@ -159,7 +159,7 @@ privatebin_environment_variable_app_name: PrivateBin
 privatebin_environment_variable_error_stack_traces_enabled: false
 #
 # The port number in the container
-# See: https://github.com/laurent22/joplin/tree/dev/packages/server#configure-docker-for-joplin-server
+# See: https://github.com/laurent22/joplin/tree/dev/packages/server#configure-docker-for-privatebin
 privatebin_environment_variable_http_port: 22300
 
 # env.j2: URL config
@@ -168,9 +168,9 @@ privatebin_environment_variable_base_url: "https://{{ privatebin_hostname }}{{ '
 # env.j2: Database config
 privatebin_environment_variable_database_hostname: ''
 privatebin_environment_variable_database_port: 5432
-privatebin_environment_variable_database_username: 'joplin-server'
+privatebin_environment_variable_database_username: 'privatebin'
 privatebin_environment_variable_database_password: 'some-password'
-privatebin_environment_variable_database_name: 'joplin-server'
+privatebin_environment_variable_database_name: 'privatebin'
 privatebin_environment_variable_database_connection_string: 'postgres://{{ privatebin_environment_variable_database_username }}:{{ privatebin_environment_variable_database_password }}@{{ privatebin_environment_variable_database_hostname }}:{{ privatebin_environment_variable_database_port }}/{{ privatebin_environment_variable_database_name }}'
 
 # env.j2: Mailer config
