@@ -15,7 +15,6 @@
     - privatebin_gid
     - privatebin_hostname
     - privatebin_path_prefix
-    - privatebin_environment_variable_database_hostname
     - privatebin_container_network
 
 - when: privatebin_container_labels_traefik_enabled | bool
