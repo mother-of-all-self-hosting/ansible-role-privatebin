@@ -295,3 +295,18 @@ privatebin_config_trafic_exempted: ""
 # Specify IP addresses (v4 or v6) or subnets (CIDR) to allow to create pastes.
 # If multiple values are to be exempted, the list needs to be separated with commas.
 privatebin_config_trafic_creators: ""
+
+# Control the "model" configuration
+# See: https://github.com/PrivateBin/PrivateBin/wiki/Configuration#model
+# Also: https://github.com/PrivateBin/PrivateBin/blob/master/cfg/conf.sample.php
+#
+# Valid values: Filesystem, GoogleCloudStorage, MySQL, SQLite, PostgreSQL, S3
+privatebin_config_model: Filesystem
+
+# Specify model configurations for MySQL and PostgreSQL
+privatebin_database_hostname: ''
+privatebin_database_username: 'privatebin'
+privatebin_database_password: 'some-password'
+privatebin_database_name: 'privatebin'
+privatebin_config_model_database_mysql_dsn: 'mysql:host={{ privatebin_database_hostname }};dbname={{ privatebin_database_name }};charset=UTF8'
+privatebin_config_model_database_postgres_dsn: 'pgsql:host={{ privatebin_database_hostname }};dbname={{ privatebin_database_name }}'
