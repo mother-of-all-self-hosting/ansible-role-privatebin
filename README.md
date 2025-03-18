@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 # PrivateBin Ansible role
 
-This is an [Ansible](https://www.ansible.com/) role which installs [PrivateBin](https://joplinapp.org/help/dev/spec/architecture#joplin-server) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
+This is an [Ansible](https://www.ansible.com/) role which installs [PrivateBin](https://privatebin.info/) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
 This role *implicitly* depends on:
 
