@@ -7,15 +7,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-# Project source code URL: https://github.com/laurent22/joplin
+# Project source code URL: https://github.com/PrivateBin/PrivateBin
 
 privatebin_enabled: true
 
 privatebin_identifier: privatebin
 privatebin_base_path: "{{ privatebin_identifier }}"
 
-# There are only "latest" or "beta" tags.
-# See: https://github.com/laurent22/joplin/tree/dev/packages/server#supported-docker-tags
 privatebin_version: latest
 
 privatebin_uid: ''
@@ -34,6 +32,11 @@ privatebin_container_image_registry_prefix: "{{ privatebin_container_image_regis
 privatebin_container_image_registry_prefix_upstream: "{{ privatebin_container_image_registry_prefix_upstream_default }}"
 privatebin_container_image_registry_prefix_upstream_default: docker.io/
 privatebin_container_image_force_pull: "{{ privatebin_container_image.endswith(':latest') }}"
+
+# The port number in the container
+privatebin_environment_variable_http_port: 22300
+
+privatebin_environment_variable_base_url: "https://{{ privatebin_hostname }}{{ '' if privatebin_path_prefix == '/' else privatebin_path_prefix }}"
 
 # Controls whether the container exposes its HTTP port (tcp/80 in the container).
 #
@@ -154,38 +157,6 @@ privatebin_systemd_required_services_list_custom: []
 # List of systemd services that the PrivateBin systemd service wants
 privatebin_systemd_wanted_services_list: []
 
-# env.j2: General config
-privatebin_environment_variable_app_name: PrivateBin
-privatebin_environment_variable_error_stack_traces_enabled: false
-#
-# The port number in the container
-# See: https://github.com/laurent22/joplin/tree/dev/packages/server#configure-docker-for-privatebin
-privatebin_environment_variable_http_port: 22300
-
-# env.j2: URL config
-privatebin_environment_variable_base_url: "https://{{ privatebin_hostname }}{{ '' if privatebin_path_prefix == '/' else privatebin_path_prefix }}"
-
-# env.j2: Database config
-privatebin_environment_variable_database_hostname: ''
-privatebin_environment_variable_database_port: 5432
-privatebin_environment_variable_database_username: 'privatebin'
-privatebin_environment_variable_database_password: 'some-password'
-privatebin_environment_variable_database_name: 'privatebin'
-privatebin_environment_variable_database_connection_string: 'postgres://{{ privatebin_environment_variable_database_username }}:{{ privatebin_environment_variable_database_password }}@{{ privatebin_environment_variable_database_hostname }}:{{ privatebin_environment_variable_database_port }}/{{ privatebin_environment_variable_database_name }}'
-
-# env.j2: Mailer config
-privatebin_environment_variable_mailer_enabled: false
-privatebin_environment_variable_mailer_hostname: ''  # Hostname
-privatebin_environment_variable_mailer_port: 587
-privatebin_environment_variable_mailer_username: ''  # Username of the SMTP user
-privatebin_environment_variable_mailer_password: ''  # Password of the SMTP user
-privatebin_environment_variable_mailer_noreply_name: ''
-privatebin_environment_variable_mailer_noreply_email: ''  # Email address of the sender
-#
-# Controls the `MAILER_SECURITY` environment variable
-# Valid values: MailerSecurity.Starttls, MailerSecurity.Tls, MailerSecurity.None
-privatebin_environment_variable_mailer_security: MailerSecurity.Starttls
-
 # Additional environment variables.
-# See: phttps://github.com/laurent22/joplin/blob/dev/packages/server/src/env.ts
+# See: https://hub.docker.com/r/privatebin/nginx-fpm-alpine
 privatebin_environment_variables_additional_variables: ''
