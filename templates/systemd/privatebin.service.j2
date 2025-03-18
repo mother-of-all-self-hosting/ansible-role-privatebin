@@ -24,15 +24,11 @@ Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ privatebin_identifier }} 2>/dev/null || true'
 ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ privatebin_identifier }} 2>/dev/null || true'
 
-{#
-  Note: running with "--user={{ privatebin_uid }}:{{ privatebin_gid }}" returns errors
-  related to permissions such as "Error: EACCES: permission denied, mkdir '/.pm2/logs'" and
-  "Error: EACCES: permission denied, mkdir '/.pm2/pids'".
-#}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --rm \
       --name={{ privatebin_identifier }} \
       --log-driver=none \
+      --user={{ privatebin_uid }}:{{ privatebin_gid }} \
       --cap-drop=ALL \
       --network={{ privatebin_container_network }} \
       --env-file={{ privatebin_base_path }}/env \
