@@ -30,6 +30,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --log-driver=none \
       --user={{ privatebin_uid }}:{{ privatebin_gid }} \
       --cap-drop=ALL \
+      --read-only \
       --network={{ privatebin_container_network }} \
       --env-file={{ privatebin_base_path }}/env \
       --label-file={{ privatebin_base_path }}/labels \
