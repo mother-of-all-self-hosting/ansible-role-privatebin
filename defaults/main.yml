@@ -23,7 +23,7 @@ privatebin_gid: ''
 privatebin_hostname: ''
 
 # The path at which PrivateBin is exposed.
-# This value must either be `/` or not end with a slash (e.g. `/joplin`).
+# This value must either be `/` or not end with a slash (e.g. `/privatebin`).
 privatebin_path_prefix: /
 
 privatebin_container_image: "{{ privatebin_container_image_registry_prefix }}joplin/server:{{ privatebin_container_image_tag }}"
@@ -60,7 +60,7 @@ privatebin_container_additional_networks_custom: []
 privatebin_container_labels_traefik_enabled: true
 privatebin_container_labels_traefik_docker_network: "{{ privatebin_container_network }}"
 privatebin_container_labels_traefik_hostname: "{{ privatebin_hostname }}"
-# The path prefix must either be `/` or not end with a slash (e.g. `/joplin`).
+# The path prefix must either be `/` or not end with a slash (e.g. `/privatebin`).
 privatebin_container_labels_traefik_path_prefix: "{{ privatebin_path_prefix }}"
 privatebin_container_labels_traefik_rule: "Host(`{{ privatebin_container_labels_traefik_hostname }}`){% if privatebin_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ privatebin_container_labels_traefik_path_prefix }}`){% endif %}"
 privatebin_container_labels_traefik_priority: 0

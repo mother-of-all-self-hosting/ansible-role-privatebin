@@ -35,5 +35,5 @@
     - name: Fail if privatebin_container_labels_traefik_path_prefix ends with a slash
       ansible.builtin.fail:
         msg: >-
-          privatebin_container_labels_traefik_path_prefix (`{{ privatebin_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/joplin`).
+          privatebin_container_labels_traefik_path_prefix (`{{ privatebin_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/privatebin`).
       when: "privatebin_container_labels_traefik_path_prefix != '/' and privatebin_container_labels_traefik_path_prefix[-1] == '/'"
