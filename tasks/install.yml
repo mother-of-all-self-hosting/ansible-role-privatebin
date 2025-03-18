@@ -26,6 +26,14 @@
     - env
     - labels
 
+- name: Ensure PrivateBin config file installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/config.sample.php.j2"
+    dest: "{{ privatebin_base_path }}/config.php"
+    mode: "0640"
+    owner: "{{ privatebin_uid }}"
+    group: "{{ privatebin_gid }}"
+
 - name: Ensure PrivateBin container image is pulled
   community.docker.docker_image:
     name: "{{ privatebin_container_image }}"
