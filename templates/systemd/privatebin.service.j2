@@ -30,17 +30,17 @@ ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_s
   "Error: EACCES: permission denied, mkdir '/.pm2/pids'".
 #}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
-			--rm \
-			--name={{ privatebin_identifier }} \
-			--log-driver=none \
-			--cap-drop=ALL \
-			--network={{ privatebin_container_network }} \
-			--env-file={{ privatebin_base_path }}/env \
-			--label-file={{ privatebin_base_path }}/labels \
-			{% for arg in privatebin_container_extra_arguments %}
-			{{ arg }} \
-			{% endfor %}
-			{{ privatebin_container_image }}
+      --rm \
+      --name={{ privatebin_identifier }} \
+      --log-driver=none \
+      --cap-drop=ALL \
+      --network={{ privatebin_container_network }} \
+      --env-file={{ privatebin_base_path }}/env \
+      --label-file={{ privatebin_base_path }}/labels \
+      {% for arg in privatebin_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ privatebin_container_image }}
 
 {% for network in privatebin_container_additional_networks %}
 ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ privatebin_identifier }}
