@@ -161,3 +161,83 @@ privatebin_systemd_wanted_services_list: []
 # Additional environment variables.
 # See: https://hub.docker.com/r/privatebin/nginx-fpm-alpine
 privatebin_environment_variables_additional_variables: ''
+
+# Specify an instance name to be displayed on the UI
+privatebin_config_main_name: PrivateBin
+
+# Specify a URL with the hostname and directory which points to the PrivateBin files, including an ending slash (/).
+privatebin_config_main_basepath: "{{ privatebin_scheme }}://{{ privatebin_hostname }}{{ privatebin_path_prefix }}{% if privatebin_path_prefix != '/' %}/{% endif %}"
+
+# Control whether the discussion feature is enabled
+privatebin_config_main_discussion_enabled: true
+
+# Control whether the discussion feature is pre-selected
+privatebin_config_main_opendiscussion_enabled: false
+
+# Control whether the date and time are displayed on a comment
+privatebin_config_main_discussiondatedisplay_enabled: true
+
+# Control whether the password feature is enabled
+privatebin_config_main_password_enabled: true
+
+# Control whether the file upload feature is enabled
+privatebin_config_main_fileupload_enabled: false
+
+# Control whether the burn-after-reading feature is pre-selected
+privatebin_config_main_burnafterreadingselected_enabled: false
+
+# Specify the display mode to pre-select by default
+# Valid values: plaintext, syntaxhighlighting, markdown
+privatebin_config_main_defaultformatter: plaintext
+
+# Specify the syntax highlighting theme
+# Valid values: desert, doxy, prettify, sons-of-obsidian, sunburst
+privatebin_config_main_syntaxhighlightingtheme: "sons-of-obsidian"
+
+# Control the size limit per paste or comment in bytes
+# Default: 10 Mebibytes
+privatebin_config_main_sizelimit: 10485760
+
+# Control whether the template selection menu is enabled
+privatebin_config_main_templateselection: false
+
+# Specify the template activated on the instance by default
+#
+# Valid values: bootstrap, bootstrap-page, bootstrap-dark, bootstrap-dark-page,
+# bootstrap-compact, bootstrap-compact-page, bootstrap5, page
+privatebin_config_main_template: bootstrap
+
+# Specify the info text to display at the bottom right
+# HTML tags are allowed. Use single quotes for HTML attributes.
+privatebin_config_main_info: ""
+
+# Specify the notice to display
+privatebin_config_main_notice: ""
+
+# Control whether the language selection menu is enabled
+# Note: PrivateBin guesses visitors language based on the browser setting by default
+privatebin_config_main_languageselection_enabled: false
+
+# Specify the default language on the instance
+privatebin_config_main_languagedefault: en
+
+# Control whether the button to create a QR code of a paste is enabled
+privatebin_config_main_qrcode_enabled: true
+
+# Control whether the button to share a paste with mail is enabled
+privatebin_config_main_email_enabled: true
+
+# Specify an identicon generator
+#
+# Note: if the server salt is leaked and a SHA512 HMAC rainbow table is generated
+# for all (relevant) IPs, the identicon may be used to get the IP of a comment poster.
+#
+# Valid values: none, identicon, jdenticon, vizhash
+privatebin_config_main_icon: identicon
+
+# Control whether the warning message is enabled when the site is served over an insecure HTTP connection
+privatebin_config_main_httpwarning: true
+
+# Specify a compression algorithm
+# Valid values: none, zlib
+privatebin_config_main_compression: zlib
