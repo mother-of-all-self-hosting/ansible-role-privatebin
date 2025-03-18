@@ -3,7 +3,7 @@ galaxy_info:
   company: progressiv
   role_name: joplin-server
   namespace: progressiv
-  description: Joplin Server
+  description: PrivateBin
   platforms:
     - name: Debian
       versions:

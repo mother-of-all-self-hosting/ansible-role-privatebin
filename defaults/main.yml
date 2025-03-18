@@ -21,10 +21,10 @@ joplin_server_version: latest
 joplin_server_uid: ''
 joplin_server_gid: ''
 
-# The hostname at which Joplin Server is served.
+# The hostname at which PrivateBin is served.
 joplin_server_hostname: ''
 
-# The path at which Joplin Server is exposed.
+# The path at which PrivateBin is exposed.
 # This value must either be `/` or not end with a slash (e.g. `/joplin`).
 joplin_server_path_prefix: /
 
@@ -145,17 +145,17 @@ joplin_server_floc_optout_enabled: true
 # See: `joplin_server_http_header_strict_transport_security`
 joplin_server_hsts_preload_enabled: false
 
-# List of systemd services that the Joplin Server systemd service depends on
+# List of systemd services that the PrivateBin systemd service depends on
 joplin_server_systemd_required_services_list: "{{ joplin_server_systemd_required_services_list_default + joplin_server_systemd_required_services_list_auto + joplin_server_systemd_required_services_list_custom }}"
 joplin_server_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
 joplin_server_systemd_required_services_list_auto: []
 joplin_server_systemd_required_services_list_custom: []
 
-# List of systemd services that the Joplin Server systemd service wants
+# List of systemd services that the PrivateBin systemd service wants
 joplin_server_systemd_wanted_services_list: []
 
 # env.j2: General config
-joplin_server_environment_variable_app_name: Joplin Server
+joplin_server_environment_variable_app_name: PrivateBin
 joplin_server_environment_variable_error_stack_traces_enabled: false
 #
 # The port number in the container
