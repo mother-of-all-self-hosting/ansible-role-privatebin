@@ -321,3 +321,10 @@ privatebin_database_postgres_username: 'privatebin'
 privatebin_database_postgres_password: 'some-password'
 privatebin_database_postgres_name: 'privatebin'
 privatebin_config_model_database_postgres_dsn: 'pgsql:host={{ privatebin_database_postgres_hostname }};dbname={{ privatebin_database_postgres_name }}'
+
+# Specify model configurations for AWS S3
+privatebin_config_model_s3_region: 'eu-central-1'
+privatebin_config_model_s3_version: 'latest'
+privatebin_config_model_s3_bucket: 'my-bucket'
+privatebin_config_model_s3_accesskey: 'access key id'
+privatebin_config_model_s3_secretkey: 'secret access key'

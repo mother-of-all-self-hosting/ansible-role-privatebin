@@ -241,11 +241,11 @@ opt[12] = true    ; PDO::ATTR_PERSISTENT
 [model]
 class = S3Storage
 [model_options]
-region = "eu-central-1"
-version = "latest"
-bucket = "my-bucket"
-accesskey = "access key id"
-secretkey = "secret access key"
+region = {{ privatebin_config_model_s3_region }}
+version = {{ privatebin_config_model_s3_version }}
+bucket = {{ privatebin_config_model_s3_bucket }}
+accesskey = {{ privatebin_config_model_s3_accesskey }}
+secretkey = {{ privatebin_config_model_s3_secretkey }}
 {% endif %}
 
 ;[yourls]
