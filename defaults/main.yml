@@ -284,6 +284,40 @@ privatebin_config_expire_options: |
 # Valid values: ones in privatebin_config_expire_options
 privatebin_config_expire_default: 1week
 
+# Specify a public URL shortener
+#
+# If specified, it becomes possible for users to shorten a URL of a paste with
+# a public URL shortener such as Bit.ly, Shlink, and a public YOURLS instance.
+#
+# For URL formats, see: https://github.com/PrivateBin/PrivateBin/wiki/Configuration#urlshortener
+#
+# It is recommended to use a self-hosted shortener only, as it will leak the paste's encryption key.
+#
+# To use a **private** shortner (YOURLS), you'd need to privatebin_config_yourls_enabled to true, and
+# set "signature" (privatebin_config_yourls_signature) and "apiurl" (privatebin_config_yourls_apiurl)
+# instead. See below for details.
+#
+# Example: https://shortener.example.com/api?link=
+privatebin_config_main_urlshortener: ""
+
+# Specify an API access key and URL of a private YOURLS instance
+#
+# If specified, it becomes possible for users to shorten a URL of a paste with
+# a private YOURLS URL shortener.
+#
+# You can find your "signature" and URL on the "Tools" page of your YOURLS instance.
+#
+# Control whether the private YOURLS instance is used
+# Note: if this is set to true, privatebin_config_main_urlshortener is ignored.
+privatebin_config_yourls_enabled: false
+#
+# Set the "signature" (access key) issued by the YOURLS instance for using the account
+privatebin_config_yourls_signature: ""
+#
+# Set URL of the YOURLS instance's API, called to shorten a paste URL
+# Example: https://your-yourls-instance.com/yourls-api.php
+privatebin_config_yourls_apiurl: ""
+
 # Specify the number of seconfs for rate-limiting per IP address
 # Set 0 to disable rate-limiting
 privatebin_config_trafic_limit: 10
