@@ -283,3 +283,15 @@ privatebin_config_expire_options: |
 # Control the default value of expiration pre-selected by default
 # Valid values: ones in privatebin_config_expire_options
 privatebin_config_expire_default: 1week
+
+# Specify the number of seconfs for rate-limiting per IP address
+# Set 0 to disable rate-limiting
+privatebin_config_trafic_limit: 10
+
+# Specify IP addresses (v4 or v6) or subnets (CIDR) to exempt from the rate-limit.
+# If multiple values are to be exempted, the list needs to be separated with commas.
+privatebin_config_trafic_exempted: ""
+
+# Specify IP addresses (v4 or v6) or subnets (CIDR) to allow to create pastes.
+# If multiple values are to be exempted, the list needs to be separated with commas.
+privatebin_config_trafic_creators: ""
