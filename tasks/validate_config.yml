@@ -16,7 +16,6 @@
     - privatebin_hostname
     - privatebin_path_prefix
     - privatebin_container_network
-    - privatebin_config_model  # If neither a database nor an object storage is used, it must be set to "Filesystem".
 
 - when: privatebin_container_labels_traefik_enabled | bool
   block:

@@ -303,10 +303,16 @@ privatebin_config_trafic_creators: ""
 # Valid values: Filesystem, GoogleCloudStorage, MySQL, SQLite, PostgreSQL, S3
 privatebin_config_model: Filesystem
 
-# Specify model configurations for MySQL and PostgreSQL
-privatebin_database_hostname: ''
-privatebin_database_username: 'privatebin'
-privatebin_database_password: 'some-password'
-privatebin_database_name: 'privatebin'
-privatebin_config_model_database_mysql_dsn: 'mysql:host={{ privatebin_database_hostname }};dbname={{ privatebin_database_name }};charset=UTF8'
-privatebin_config_model_database_postgres_dsn: 'pgsql:host={{ privatebin_database_hostname }};dbname={{ privatebin_database_name }}'
+# Specify model configurations for MySQL
+privatebin_database_mysql_hostname: ''
+privatebin_database_mysql_username: 'privatebin'
+privatebin_database_mysql_password: 'some-password'
+privatebin_database_mysql_name: 'privatebin'
+privatebin_config_model_database_mysql_dsn: 'mysql:host={{ privatebin_database_mysql_hostname }};dbname={{ privatebin_database_mysql_name }};charset=UTF8'
+
+# Specify model configurations for PostgreSQL
+privatebin_database_postgres_hostname: ''
+privatebin_database_postgres_username: 'privatebin'
+privatebin_database_postgres_password: 'some-password'
+privatebin_database_postgres_name: 'privatebin'
+privatebin_config_model_database_postgres_dsn: 'pgsql:host={{ privatebin_database_postgres_hostname }};dbname={{ privatebin_database_postgres_name }}'

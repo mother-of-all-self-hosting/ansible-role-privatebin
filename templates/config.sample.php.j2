@@ -212,10 +212,10 @@ uniformacl = false
 [model]
 class = Database
 [model_options]
-dsn = {{ privatebin_config_model_database_mysql_dsn }}
+dsn = "{{ privatebin_config_model_database_mysql_dsn }}"
 tbl = "privatebin_"	; table prefix
-usr = {{ privatebin_database_username }}
-pwd = {{ privatebin_database_password }}
+usr = {{ privatebin_database_mysql_username }}
+pwd = {{ privatebin_database_mysql_password }}
 opt[12] = true	  ; PDO::ATTR_PERSISTENT
 
 {% elif privatebin_config_model == 'SQLite' %}
@@ -231,10 +231,10 @@ opt[12] = true	; PDO::ATTR_PERSISTENT
 [model]
 class = Database
 [model_options]
-dsn = {{ privatebin_config_model_database_postgres_dsn }}
+dsn = "{{ privatebin_config_model_database_postgres_dsn }}"
 tbl = "privatebin_"     ; table prefix
-usr = {{ privatebin_database_username }}
-pwd = {{ privatebin_database_password }}
+usr = {{ privatebin_database_postgres_username }}
+pwd = {{ privatebin_database_postgres_password }}
 opt[12] = true    ; PDO::ATTR_PERSISTENT
 
 {% elif privatebin_config_model == 'S3' %}
