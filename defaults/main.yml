@@ -267,3 +267,19 @@ privatebin_config_main_httpwarning: true
 # Specify a compression algorithm
 # Valid values: none, zlib
 privatebin_config_main_compression: zlib
+
+# Specify the number of seconds until a paste will be expired to each line as options.
+# Set an option for 0 only, if a paste should never expire.
+privatebin_config_expire_options: |
+  5min = 300
+  10min = 600
+  1hour = 3600
+  1day = 86400
+  1week = 604800
+  1month = 2592000 ; This is not *exactly* one month as it's 30 days.
+  1year = 31536000
+  never = 0
+
+# Control the default value of expiration pre-selected by default
+# Valid values: ones in privatebin_config_expire_options
+privatebin_config_expire_default: 1week
