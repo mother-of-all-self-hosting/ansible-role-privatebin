@@ -215,6 +215,40 @@ Here are the available templates ([preview](https://github.com/PrivateBin/Privat
 - bootstrap5
 - page
 
+### Specify a URL shortener (optional)
+
+It is possible to have the PrivateBin instance use a URL shortener such as Bit.ly and a YOURLS instance, so that users can shorten a URL of a paste with it. **It is recommended to use a self-hosted shortener only and set a password to a paste, as the shortener will leak the paste's encryption key.**
+
+To use a public shortener, add the following configuration to your `vars.yml` file:
+
+```yaml
+# Example: https://shortener.example.com/api?link=
+privatebin_config_main_urlshortener: ''
+```
+
+For URL formats, see: https://github.com/PrivateBin/PrivateBin/wiki/Configuration#urlshortener
+
+#### Use a private YOURLS instance with API access key
+
+If you are using a private YOURLS instance, you might probably want to disallow a third party to use it without credentials. You can configure authentication by adding the following configuration to your `vars.yml` file:
+
+```yaml
+privatebin_config_yourlsapi_enabled: true
+
+# Set the "signature" (access key) issued by the YOURLS instance for using the account
+privatebin_config_yourlsapi_signature: ''
+
+# Set URL of the YOURLS instance's API, called to shorten a paste URL
+# Example: https://your-yourls-instance.com/yourls-api.php
+privatebin_config_yourlsapi_url: ""
+```
+
+You can find the "signature" and API's URL on the "Tools" page of the YOURLS instance.
+
+**Note**: if `privatebin_config_yourlsapi_url` is specified, `privatebin_config_main_urlshortener` will be ignored.
+
+💡 If you are looking for an Ansible roles for YOURLS, you might be interested in [ansible-role-yourls](https://github.com/mother-of-all-self-hosting/ansible-role-yourls).
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the component.
