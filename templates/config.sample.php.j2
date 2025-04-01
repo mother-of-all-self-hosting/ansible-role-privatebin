@@ -271,8 +271,10 @@ signature = {{ privatebin_config_yourlsapi_signature }}
 apiurl = {{ privatebin_config_yourlsapi_url }}
 {% endif %}
 
-;[sri]
+{% if privatebin_config_sri %}
+[sri]
 ; Subresource integrity (SRI) hashes used in template files. Uncomment and set
 ; these for all js files used. See:
 ; https://github.com/PrivateBin/PrivateBin/wiki/FAQ#user-content-how-to-make-privatebin-work-when-i-have-changed-some-javascript-files
-;js/privatebin.js = "sha512-[…]"
+{{ privatebin_config_sri }}
+{% endif %}

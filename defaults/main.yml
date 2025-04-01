@@ -362,3 +362,12 @@ privatebin_config_model_s3_version: 'latest'
 privatebin_config_model_s3_bucket: 'my-bucket'
 privatebin_config_model_s3_accesskey: 'access key id'
 privatebin_config_model_s3_secretkey: 'secret access key'
+
+# Specify Subresource Integrity (SRI) hashes of template JavaScript files,
+# if these files were changed by you or a reverse proxy such as Cloudflare.
+# See: https://github.com/PrivateBin/PrivateBin/wiki/FAQ#user-content-how-to-make-privatebin-work-when-i-have-changed-some-javascript-files
+#
+privatebin_config_sri: |
+#  js/privatebin.js = "sha512-[…]"
+#  js/legacy.js = "sha512-[…]"
+#  …
