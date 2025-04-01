@@ -249,6 +249,22 @@ You can find the "signature" and API's URL on the "Tools" page of the YOURLS ins
 
 💡 If you are looking for an Ansible roles for YOURLS, you might be interested in [ansible-role-yourls](https://github.com/mother-of-all-self-hosting/ansible-role-yourls).
 
+### Configure Subresource Integrity (SRI) hashes (optional)
+
+PrivateBin implements [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity), a security feature that enables browsers to verify that resources they fetch (for example, from a CDN) are not tampered with.
+
+If you modified template JavaScript files, it is necessary to regenerate the hashes of them by following the method described [here](https://github.com/PrivateBin/PrivateBin/wiki/Development#subresource-integrity-for-javascript-resources). After that, you can specify them with the following configuration on your `vars.yml` file:
+
+```yaml
+privatebin_config_sri: |
+  js/privatebin.js = "sha512-[…]"
+  js/legacy.js = "sha512-[…]"
+  …
+```
+
+>[!NOTE]
+> SRI disables the instance to work if it is behind a reverse proxy which alters the assets for site loading optimization, such as CloudFlare. In this case, you need to change its configuration to bypass caching. See [here](https://github.com/PrivateBin/PrivateBin/wiki/FAQ#how-to-make-privatebin-work-when-using-cloudflare-for-ddos-protection) for details.
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the component.
