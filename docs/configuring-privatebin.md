@@ -56,6 +56,65 @@ privatebin_hostname: "example.com"
 
 After adjusting the hostname, make sure to adjust your DNS records to point the domain to your server.
 
+### Configure a storage for pastes
+
+The role provides these storage backend options: local filesystem (default), Google Cloud Storage, MySQL, SQLite, PostgreSQL, and Amazon S3.
+
+#### Local filesystem (default)
+
+To use local filesystem for a storage, you need to add a Docker volume to mount in the container, so that the directory for storing files is shared with the host machine.
+
+To add the volume, prepare a directory on the host machine and add the following configuration to your `vars.yml` file, setting the directory path to `src`:
+
+```yaml
+privatebin_container_additional_volumes:
+  - type: bind
+    src: /path/on/the/host
+    dst: /srv/data
+    options:
+```
+
+Make sure permissions of the directory specified to `src`. If not correctly specified, the service returns a permission error while trying to put data to it.
+
+#### Google Cloud Storage
+
+To use Google Cloud Storage, add the following configuration to your `vars.yml` file (adapt to your needs):
+
+```yaml
+privatebin_config_model: GoogleCloudStorage
+
+# Set a Google Cloud Storage bucket
+privatebin_config_model_gcs_bucket: 'my-private-bin'
+
+# Set a Google Cloud Storage prefix
+privatebin_config_model_gcs_prefix: 'pastes'
+```
+
+Before using it, authentication should be set up with [Application Default Credentials](https://cloud.google.com/docs/authentication/production#auth-cloud-implicit-nodejs).
+
+#### Amazon S3
+
+To use Amazon S3 object storage, add the following configuration to your `vars.yml` file (adapt to your needs):
+
+```yaml
+privatebin_config_model: S3
+
+# Set S3 region
+privatebin_config_model_s3_region: 'eu-central-1'
+
+# Set S3 version
+privatebin_config_model_s3_version: 'latest'
+
+# Set a S3 bucket name to use
+privatebin_config_model_s3_bucket: 'my-bucket'
+
+# Set a S3 access key ID
+privatebin_config_model_s3_accesskey: 'access key id'
+
+# Set a S3 secret access key ID
+privatebin_config_model_s3_secretkey: 'secret access key'
+```
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the component.
