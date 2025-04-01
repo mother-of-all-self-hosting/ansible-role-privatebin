@@ -58,7 +58,9 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 
 ### Configure a storage for pastes
 
-The role provides these storage backend options: local filesystem (default), Google Cloud Storage, MySQL, SQLite, PostgreSQL, and Amazon S3.
+The role provides these storage backend options: local filesystem (default), MySQL, PostgreSQL, SQLite, Google Cloud Storage, and Amazon S3.
+
+💡 If you are looking for Ansible roles for [MariaDB](https://mariadb.org/) and PostgreSQL, you might be interested in [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb) and [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
 #### Local filesystem (default)
 
@@ -75,6 +77,50 @@ privatebin_container_additional_volumes:
 ```
 
 Make sure permissions of the directory specified to `src`. If not correctly specified, the service returns a permission error while trying to put data to it.
+
+#### MySQL
+
+To use MySQL for a storage, add the following configuration to your `vars.yml` file (adapt to your needs):
+
+```yaml
+privatebin_config_model: MySQL
+
+# Set a hostname of a MySQL instance
+privatebin_database_mysql_hostname: ''
+
+# Set a username of a MySQL instance
+privatebin_database_mysql_username: 'privatebin'
+
+# Set a hostname of a MySQL instance
+privatebin_database_mysql_password: 'some-password'
+
+# Set a database name
+privatebin_database_mysql_name: 'privatebin'
+```
+
+You can also configure Data Source Name (DSN) with `privatebin_config_model_database_mysql_dsn`. See [`defaults/main.yml`](../defaults/main.yml) for its default value.
+
+#### PostgreSQL
+
+To use PostgreSQL for a storage, add the following configuration to your `vars.yml` file (adapt to your needs):
+
+```yaml
+privatebin_config_model: PostgreSQL
+
+# Set a hostname of a PostgreSQL instance
+privatebin_database_postgres_hostname: ''
+
+# Set a username of a PostgreSQL instance
+privatebin_database_postgres_username: 'privatebin'
+
+# Set a hostname of a PostgreSQL instance
+privatebin_database_postgres_password: 'some-password'
+
+# Set a database name
+privatebin_database_postgres_name: 'privatebin'
+```
+
+You can also configure Data Source Name (DSN) with `privatebin_config_model_database_postgres_dsn`. See [`defaults/main.yml`](../defaults/main.yml) for its default value.
 
 #### Google Cloud Storage
 
