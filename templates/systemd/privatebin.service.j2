@@ -32,6 +32,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --cap-drop=ALL \
       --read-only \
       --network={{ privatebin_container_network }} \
+      {% if privatebin_container_http_host_bind_port %}
+      -p {{ privatebin_container_http_host_bind_port }}:{{ privatebin_container_http_port }} \
+      {% endif %}
       --env-file={{ privatebin_base_path }}/env \
       --label-file={{ privatebin_base_path }}/labels \
       {% for volume in privatebin_container_additional_volumes %}
