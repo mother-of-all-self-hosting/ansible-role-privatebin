@@ -197,6 +197,24 @@ PrivateBin implements the burn-after-reading feature, which automatically delete
 privatebin_config_main_burnafterreadingselected_enabled: true
 ```
 
+### Configure the default template (optional)
+
+PrivateBin includes templates (themes) for its UI. The default theme is `bootstrap`. You can specify one by adding the following configuration to your `vars.yml` file:
+
+```yaml
+privatebin_config_main_template: bootstrap
+```
+
+Here are the available templates ([preview](https://github.com/PrivateBin/PrivateBin/wiki/Templates#templates-included-in-privatebin)):
+- bootstrap
+- bootstrap-page
+- bootstrap-dark
+- bootstrap-dark-page
+- bootstrap-compact
+- bootstrap-compact-page
+- bootstrap5
+- page
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the component.
