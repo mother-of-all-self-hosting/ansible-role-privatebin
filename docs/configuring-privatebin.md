@@ -171,6 +171,14 @@ privatebin_config_main_discussion_enabled: false
 
 **Note**: existing discussions will remain visible after disabling the feature.
 
+### Configure the password feature (optional)
+
+By default, users can set a password when creating a paste. To disable it, add the following configuration to your `vars.yml` file:
+
+```yaml
+privatebin_config_main_password_enabled: false
+```
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the component.
