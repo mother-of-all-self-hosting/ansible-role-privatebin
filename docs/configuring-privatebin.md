@@ -62,9 +62,9 @@ The role provides these storage backend options: local filesystem (default), MyS
 
 💡 If you are looking for Ansible roles for [MariaDB](https://mariadb.org/) and PostgreSQL, you might be interested in [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb) and [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
-#### Local filesystem (default)
+#### Local filesystem (default) / SQLite
 
-To use local filesystem for a storage, you need to add a Docker volume to mount in the container, so that the directory for storing files is shared with the host machine.
+To use local filesystem or SQLite database for a storage, you need to add a Docker volume to mount in the container, so that the directory for storing files is shared with the host machine.
 
 To add the volume, prepare a directory on the host machine and add the following configuration to your `vars.yml` file, setting the directory path to `src`:
 
