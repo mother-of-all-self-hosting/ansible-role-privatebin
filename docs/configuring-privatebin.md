@@ -179,6 +179,24 @@ By default, users can set a password when creating a paste. To disable it, add t
 privatebin_config_main_password_enabled: false
 ```
 
+### Configure the file upload feature (optional)
+
+You can enable the file upload feature (disabled by default). To do so, add the following configuration to your `vars.yml` file:
+
+```yaml
+privatebin_config_main_fileupload_enabled: true
+```
+
+**Note**: even if this feature is not enabled, you have to add a Docker volume if neither database (MySQL, PostgreSQL, or SQLite) nor cloud object storage (Google Cloud Storage or Amazon S3) would be used, so that pastes themselves can be stored on the server's filesystem.
+
+### Configure the burn-after-reading feature (optional)
+
+PrivateBin implements the burn-after-reading feature, which automatically deletes a paste as soon as it is opened. You can have the UI pre-select this feature by adding the following configuration to your `vars.yml` file:
+
+```yaml
+privatebin_config_main_burnafterreadingselected_enabled: true
+```
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the component.
