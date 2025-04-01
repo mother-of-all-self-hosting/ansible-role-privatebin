@@ -161,6 +161,16 @@ privatebin_config_model_s3_accesskey: 'access key id'
 privatebin_config_model_s3_secretkey: 'secret access key'
 ```
 
+### Configure the discussion feature (optional)
+
+You can disable the discussion feature (enabled by default). To do so, add the following configuration to your `vars.yml` file:
+
+```yaml
+privatebin_config_main_discussion_enabled: false
+```
+
+**Note**: existing discussions will remain visible after disabling the feature.
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the component.

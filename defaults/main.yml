@@ -169,6 +169,7 @@ privatebin_config_main_name: PrivateBin
 privatebin_config_main_basepath: "{{ privatebin_scheme }}://{{ privatebin_hostname }}{{ privatebin_path_prefix }}{% if privatebin_path_prefix != '/' %}/{% endif %}"
 
 # Control whether the discussion feature is enabled
+# Note that existing discussions will remain visible after setting this to "false"
 privatebin_config_main_discussion_enabled: true
 
 # Control whether the discussion feature is pre-selected
