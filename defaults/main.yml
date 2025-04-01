@@ -235,6 +235,32 @@ privatebin_config_main_email_enabled: true
 # Valid values: none, identicon, jdenticon, vizhash
 privatebin_config_main_icon: identicon
 
+# Control whether "self" (if "bootstrap5" template is selected) or "none" (if one of
+# the other templates is selected) is set to default-src of "cspheader" config option.
+#
+# Set this to false to modify the option completely with "privatebin_config_main_cspheader".
+privatebin_config_main_cspheader_defaultsrc_enabled: true
+
+# Specify the default "cspheader" config option.
+#
+# If privatebin_config_main_cspheader_defaultsrc_enabled is set to true,
+# "default-src: 'self'" or "default-src: 'none'" is preselected.
+#
+# Modify this if you added a custom script on a third-party domain such as tracking script to your templates
+# or run the instance behind a DDoS-protection service.
+privatebin_config_main_cspheader: >
+  base-uri 'self';
+  form-action 'none';
+  manifest-src 'self';
+  connect-src * blob:; script-src 'self' 'wasm-unsafe-eval';
+  style-src 'self';
+  font-src 'self';
+  frame-ancestors 'none';
+  img-src 'self' data: blob:;
+  media-src blob:;
+  object-src blob:;
+  sandbox allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads
+
 # Control whether the warning message is enabled when the site is served over an insecure HTTP connection
 privatebin_config_main_httpwarning: true
 
