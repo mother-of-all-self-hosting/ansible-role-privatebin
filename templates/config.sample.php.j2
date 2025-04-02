@@ -91,9 +91,9 @@ languagedefault = {{ privatebin_config_main_languagedefault }}
 ; (optional) URL shortener address to offer after a new paste is created.
 ; It is suggested to only use this with self-hosted shorteners as this will leak
 ; the pastes encryption key.
-{% if privatebin_config_main_urlshortener and privatebin_config_yourls_enabled == '' %}
+{% if privatebin_config_main_urlshortener and privatebin_config_yourlsapi_enabled == '' %}
 urlshortener = {{ privatebin_config_main_urlshortener }}
-{% elif privatebin_config_yourls_enabled %}
+{% elif privatebin_config_yourlsapi_enabled %}
 urlshortener = "${basepath}?shortenviayourls&link="
 {% endif %}
 
@@ -252,7 +252,7 @@ accesskey = {{ privatebin_config_model_s3_accesskey }}
 secretkey = {{ privatebin_config_model_s3_secretkey }}
 {% endif %}
 
-{% if privatebin_config_yourls_enabled %}
+{% if privatebin_config_yourlsapi_enabled %}
 [yourls]
 ; When using YOURLS as a "urlshortener" config item:
 ; - By default, "urlshortener" will point to the YOURLS API URL, with or without
@@ -266,9 +266,9 @@ secretkey = {{ privatebin_config_model_s3_secretkey }}
 ;   "apiurl" and the "access signature" from the "signature" parameters below.
 
 ; (optional) the "signature" (access key) issued by YOURLS for the using account
-signature = {{ privatebin_config_yourls_signature }}
+signature = {{ privatebin_config_yourlsapi_signature }}
 ; (optional) the URL of the YOURLS API, called to shorten a PrivateBin URL
-apiurl = {{ privatebin_config_yourls_apiurl }}
+apiurl = {{ privatebin_config_yourlsapi_url }}
 {% endif %}
 
 ;[sri]

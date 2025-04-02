@@ -293,8 +293,8 @@ privatebin_config_expire_default: 1week
 #
 # It is recommended to use a self-hosted shortener only, as it will leak the paste's encryption key.
 #
-# To use a **private** shortner (YOURLS), you'd need to privatebin_config_yourls_enabled to true, and
-# set "signature" (privatebin_config_yourls_signature) and "apiurl" (privatebin_config_yourls_apiurl)
+# To use a **private** shortner (YOURLS), you'd need to privatebin_config_yourlsapi_enabled to true, and
+# set "signature" (privatebin_config_yourlsapi_signature) and "apiurl" (privatebin_config_yourlsapi_url)
 # instead. See below for details.
 #
 # Example: https://shortener.example.com/api?link=
@@ -309,14 +309,14 @@ privatebin_config_main_urlshortener: ""
 #
 # Control whether the private YOURLS instance is used
 # Note: if this is set to true, privatebin_config_main_urlshortener is ignored.
-privatebin_config_yourls_enabled: false
+privatebin_config_yourlsapi_enabled: false
 #
 # Set the "signature" (access key) issued by the YOURLS instance for using the account
-privatebin_config_yourls_signature: ""
+privatebin_config_yourlsapi_signature: ""
 #
 # Set URL of the YOURLS instance's API, called to shorten a paste URL
 # Example: https://your-yourls-instance.com/yourls-api.php
-privatebin_config_yourls_apiurl: ""
+privatebin_config_yourlsapi_url: ""
 
 # Specify the number of seconfs for rate-limiting per IP address
 # Set 0 to disable rate-limiting
