@@ -14,7 +14,8 @@ privatebin_enabled: true
 privatebin_identifier: privatebin
 privatebin_base_path: "{{ privatebin_identifier }}"
 
-privatebin_version: 1.7.6
+# renovate: datasource=docker depName=privatebin/pdo versioning=semver
+privatebin_version: 1.7.5
 
 privatebin_uid: ''
 privatebin_gid: ''
