@@ -4,13 +4,13 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Check existence of PrivateBin systemd service
   ansible.builtin.stat:
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ privatebin_identifier }}.service"
   register: privatebin_service_stat
 
-- when: privatebin_service_stat.stat.exists | bool
+- name: Uninstall PrivateBin systemd services and files
+  when: privatebin_service_stat.stat.exists | bool
   block:
     - name: Ensure PrivateBin systemd service is stopped
       ansible.builtin.service:

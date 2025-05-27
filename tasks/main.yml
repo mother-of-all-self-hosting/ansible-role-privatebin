@@ -4,27 +4,25 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Perform PrivateBin installation tasks
-  block:
-    - name: Validate PrivateBin configuration
-      when: privatebin_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-
-    - name: Install PrivateBin
-      when: privatebin_enabled | bool
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
   tags:
     - setup-all
     - setup-privatebin
     - install-all
     - install-privatebin
+  block:
+    - name: Validate PrivateBin configuration
+      when: privatebin_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install PrivateBin
+      when: privatebin_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform PrivateBin uninstallation tasks
+  tags:
+    - setup-all
+    - setup-privatebin
   block:
     - name: Uninstall PrivateBin
       when: not privatebin_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
-  tags:
-    - setup-all
-    - setup-privatebin

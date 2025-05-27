@@ -206,6 +206,7 @@ privatebin_config_main_template: bootstrap
 ```
 
 Here are the available templates ([preview](https://github.com/PrivateBin/PrivateBin/wiki/Templates#templates-included-in-privatebin)):
+
 - bootstrap
 - bootstrap-page
 - bootstrap-dark
@@ -226,7 +227,7 @@ To use a public shortener, add the following configuration to your `vars.yml` fi
 privatebin_config_main_urlshortener: ''
 ```
 
-For URL formats, see: https://github.com/PrivateBin/PrivateBin/wiki/Configuration#urlshortener
+For URL formats, see: [https://github.com/PrivateBin/PrivateBin/wiki/Configuration#urlshortener](https://github.com/PrivateBin/PrivateBin/wiki/Configuration#urlshortener)
 
 #### Use a private YOURLS instance with API access key
 
@@ -253,7 +254,7 @@ You can find the "signature" and API's URL on the "Tools" page of the YOURLS ins
 
 PrivateBin implements [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity), a security feature that enables browsers to verify that resources they fetch (for example, from a CDN) are not tampered with.
 
-If you modified template JavaScript files, it is necessary to regenerate the hashes of them by following the method described [here](https://github.com/PrivateBin/PrivateBin/wiki/Development#subresource-integrity-for-javascript-resources). After that, you can specify them with the following configuration on your `vars.yml` file:
+If you modified template JavaScript files, it is necessary to regenerate the hashes of them by following the method described [this section on the official wiki](https://github.com/PrivateBin/PrivateBin/wiki/Development#subresource-integrity-for-javascript-resources). After that, you can specify them with the following configuration on your `vars.yml` file:
 
 ```yaml
 privatebin_config_sri: |
@@ -263,7 +264,7 @@ privatebin_config_sri: |
 ```
 
 >[!NOTE]
-> SRI disables the instance to work if it is behind a reverse proxy which alters the assets for site loading optimization, such as CloudFlare. In this case, you need to change its configuration to bypass caching. See [here](https://github.com/PrivateBin/PrivateBin/wiki/FAQ#how-to-make-privatebin-work-when-using-cloudflare-for-ddos-protection) for details.
+> SRI disables the instance to work if it is behind a reverse proxy which alters the assets for site loading optimization, such as CloudFlare. In this case, you need to change its configuration to bypass caching. See [this FAQ entry](https://github.com/PrivateBin/PrivateBin/wiki/FAQ#how-to-make-privatebin-work-when-using-cloudflare-for-ddos-protection) for details.
 
 ### Extending the configuration
 

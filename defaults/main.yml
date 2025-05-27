@@ -320,7 +320,7 @@ privatebin_config_yourlsapi_signature: ""
 # Example: https://your-yourls-instance.com/yourls-api.php
 privatebin_config_yourlsapi_url: ""
 
-# Specify the number of seconfs for rate-limiting per IP address
+# Specify the number of seconds for rate-limiting per IP address
 # Set 0 to disable rate-limiting
 privatebin_config_trafic_limit: 10
 
