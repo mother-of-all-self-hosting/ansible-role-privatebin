@@ -5,6 +5,7 @@
 
 ---
 - name: Perform PrivateBin installation tasks
+  when: privatebin_enabled | bool
   tags:
     - setup-all
     - setup-privatebin
@@ -12,17 +13,15 @@
     - install-privatebin
   block:
     - name: Validate PrivateBin configuration
-      when: privatebin_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
     - name: Install PrivateBin
-      when: privatebin_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
 - name: Perform PrivateBin uninstallation tasks
+  when: not privatebin_enabled | bool
   tags:
     - setup-all
     - setup-privatebin
   block:
     - name: Uninstall PrivateBin
-      when: not privatebin_enabled | bool
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
