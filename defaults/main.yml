@@ -17,6 +17,10 @@ privatebin_base_path: "/{{ privatebin_identifier }}"
 # renovate: datasource=docker depName=privatebin/nginx-fpm-alpine versioning=semver
 privatebin_version: 1.7.6
 
+# This is used to specify, on which tag to built an image.
+# See: https://github.com/PrivateBin/docker-nginx-fpm-alpine/tags
+privatebin_version_alpine: "3.22"
+
 privatebin_uid: ''
 privatebin_gid: ''
 
@@ -36,6 +40,12 @@ privatebin_container_image_registry_prefix: "{{ privatebin_container_image_regis
 privatebin_container_image_registry_prefix_upstream: "{{ privatebin_container_image_registry_prefix_upstream_default }}"
 privatebin_container_image_registry_prefix_upstream_default: docker.io/
 privatebin_container_image_force_pull: "{{ privatebin_container_image.endswith(':latest') }}"
+
+privatebin_container_image_self_build: false
+privatebin_container_image_self_build_name: "privatebin/docker-nginx-fpm-alpine:{{ privatebin_container_image_self_build_repo_version }}"
+privatebin_container_image_self_build_repo: "https://github.com/PrivateBin/docker-nginx-fpm-alpine.git"
+privatebin_container_image_self_build_repo_version: "{{ privatebin_version + '-alpine' + privatebin_version_alpine if privatebin_version != 'latest' else 'main' }}"
+privatebin_container_image_self_build_src_files_path: "{{ privatebin_base_path }}/docker-src"
 
 # Controls whether the container exposes its HTTP port (tcp/80 in the container).
 #
