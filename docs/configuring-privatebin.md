@@ -274,7 +274,7 @@ Take a look at:
 
 - [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file
 
-For a complete list of PrivateBin's config options, see its [configuration sample file](https://github.com/PrivateBin/PrivateBin/blob/master/cfg/conf.sample.php) and the [documentation](https://github.com/PrivateBin/PrivateBin/wiki/Configuration).
+See its [configuration sample file](https://github.com/PrivateBin/PrivateBin/blob/master/cfg/conf.sample.php) and the [documentation](https://github.com/PrivateBin/PrivateBin/wiki/Configuration) for a complete list of PrivateBin's config options.
 
 ## Installing
 
