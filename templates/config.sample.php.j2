@@ -116,10 +116,10 @@ uniformacl = {{ privatebin_config_model_gcs_uniformacl | to_json }}
 class = Database
 [model_options]
 dsn = "{{ privatebin_config_model_database_mysql_dsn }}"
-tbl = "privatebin_"	; table prefix
+tbl = "privatebin_"  ; table prefix
 usr = {{ privatebin_database_mysql_username }}
 pwd = {{ privatebin_database_mysql_password }}
-opt[12] = true	  ; PDO::ATTR_PERSISTENT
+opt[12] = true    ; PDO::ATTR_PERSISTENT
 
 {% elif privatebin_config_model == 'SQLite' %}
 [model]
@@ -128,7 +128,7 @@ class = Database
 dsn = "sqlite:" PATH "data/db.sq3"
 usr = null
 pwd = null
-opt[12] = true	; PDO::ATTR_PERSISTENT
+opt[12] = true  ; PDO::ATTR_PERSISTENT
 
 {% elif privatebin_config_model == 'PostgreSQL' %}
 [model]
