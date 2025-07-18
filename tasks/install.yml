@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Ensure PrivateBin path exists
+- name: Ensure PrivateBin paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -13,6 +13,7 @@
     group: "{{ privatebin_gid }}"
   with_items:
     - "{{ privatebin_base_path }}"
+    - "{{ privatebin_data_path }}"
 
 - name: Ensure PrivateBin support files installed
   ansible.builtin.template:

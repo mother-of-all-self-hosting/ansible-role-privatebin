@@ -62,21 +62,13 @@ The role provides these storage backend options: local filesystem (default), MyS
 
 💡 If you are looking for Ansible roles for [MariaDB](https://mariadb.org/) and PostgreSQL, you might be interested in [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb) and [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
-#### Local filesystem (default) / SQLite
+#### SQLite
 
-To use local filesystem or SQLite database for a storage, you need to add a Docker volume to mount in the container, so that the directory for storing files is shared with the host machine.
-
-To add the volume, prepare a directory on the host machine and add the following configuration to your `vars.yml` file, setting the directory path to `src`:
+To use SQLite database for a storage, add the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-privatebin_container_additional_volumes:
-  - type: bind
-    src: /path/on/the/host
-    dst: /srv/data
-    options:
+privatebin_config_model: SQLite
 ```
-
-Make sure permissions of the directory specified to `src`. If not correctly specified, the service returns a permission error while trying to put data to it.
 
 #### MySQL
 
@@ -186,8 +178,6 @@ You can enable the file upload feature (disabled by default). To do so, add the 
 ```yaml
 privatebin_config_main_fileupload_enabled: true
 ```
-
-**Note**: even if this feature is not enabled, you have to add a Docker volume if neither database (MySQL, PostgreSQL, or SQLite) nor cloud object storage (Google Cloud Storage or Amazon S3) would be used, so that pastes themselves can be stored on the server's filesystem.
 
 ### Configure the burn-after-reading feature (optional)
 
