@@ -25,11 +25,18 @@ traefik.http.middlewares.{{ privatebin_identifier }}-strip-prefix.stripprefix.pr
 {% set middlewares = middlewares + [privatebin_identifier + '-strip-prefix'] %}
 {% endif %}
 
+{% if privatebin_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in privatebin_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ privatebin_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [privatebin_identifier + '-add-request-headers'] %}
+{% endif %}
+
 {% if privatebin_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
 {% for name, value in privatebin_container_labels_traefik_additional_response_headers.items() %}
-traefik.http.middlewares.{{ privatebin_identifier }}-add-headers.headers.customresponseheaders.{{ name }}={{ value }}
+traefik.http.middlewares.{{ privatebin_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
 {% endfor %}
-{% set middlewares = middlewares + [privatebin_identifier + '-add-headers'] %}
+{% set middlewares = middlewares + [privatebin_identifier + '-add-response-headers'] %}
 {% endif %}
 
 traefik.http.routers.{{ privatebin_identifier }}.rule={{ privatebin_container_labels_traefik_rule }}

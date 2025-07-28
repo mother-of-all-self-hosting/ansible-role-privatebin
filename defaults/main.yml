@@ -88,6 +88,12 @@ privatebin_container_labels_traefik_entrypoints: web-secure
 privatebin_container_labels_traefik_tls: "{{ privatebin_container_labels_traefik_entrypoints != 'web' }}"
 privatebin_container_labels_traefik_tls_certResolver: default  # noqa var-naming
 
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `privatebin_container_labels_traefik_additional_request_headers_custom`
+privatebin_container_labels_traefik_additional_request_headers: "{{ privatebin_container_labels_traefik_additional_request_headers_auto | combine(privatebin_container_labels_traefik_additional_request_headers_custom) }}"
+privatebin_container_labels_traefik_additional_request_headers_auto: {}
+privatebin_container_labels_traefik_additional_request_headers_custom: {}
+
 # Controls which additional headers to attach to all HTTP responses.
 # To add your own custom response headers, use `privatebin_container_labels_traefik_additional_response_headers_custom`
 privatebin_container_labels_traefik_additional_response_headers: "{{ privatebin_container_labels_traefik_additional_response_headers_auto | combine(privatebin_container_labels_traefik_additional_response_headers_custom) }}"
