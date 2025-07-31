@@ -189,10 +189,10 @@ privatebin_config_main_burnafterreadingselected_enabled: true
 
 ### Configure the default template (optional)
 
-PrivateBin includes templates (themes) for its UI. The default theme is `bootstrap`. You can specify one by adding the following configuration to your `vars.yml` file:
+PrivateBin includes templates (themes) for its UI. The default theme is `bootstrap5`. You can specify one by adding the following configuration to your `vars.yml` file:
 
 ```yaml
-privatebin_config_main_template: bootstrap
+privatebin_config_main_template: bootstrap5
 ```
 
 Here are the available templates ([preview](https://github.com/PrivateBin/PrivateBin/wiki/Templates#templates-included-in-privatebin)):
@@ -204,7 +204,6 @@ Here are the available templates ([preview](https://github.com/PrivateBin/Privat
 - bootstrap-compact
 - bootstrap-compact-page
 - bootstrap5
-- page
 
 ### Specify a URL shortener (optional)
 

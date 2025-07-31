@@ -29,14 +29,13 @@ sizelimit = {{ privatebin_config_main_sizelimit }}
 
 templateselection = {{ privatebin_config_main_templateselection | to_json }}
 
+availabletemplates[] = "bootstrap5"
 availabletemplates[] = "bootstrap"
 availabletemplates[] = "bootstrap-page"
 availabletemplates[] = "bootstrap-dark"
 availabletemplates[] = "bootstrap-dark-page"
 availabletemplates[] = "bootstrap-compact"
 availabletemplates[] = "bootstrap-compact-page"
-availabletemplates[] = "bootstrap5"
-availabletemplates[] = "page"
 
 template = {{ privatebin_config_main_template }}
 
@@ -65,8 +64,6 @@ cspheader = "{% if privatebin_config_main_cspheader_defaultsrc_enabled %}default
 {% else %}
 cspheader = "{% if privatebin_config_main_cspheader_defaultsrc_enabled %}default-src 'none'; {% endif %}{{ privatebin_config_main_cspheader }}"
 {% endif %}
-
-; zerobincompatibility = false
 
 httpwarning = {{ privatebin_config_main_httpwarning | to_json }}
 

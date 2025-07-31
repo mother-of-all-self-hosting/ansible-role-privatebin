@@ -225,8 +225,8 @@ privatebin_config_main_templateselection: false
 # Specify the template activated on the instance by default
 #
 # Valid values: bootstrap, bootstrap-page, bootstrap-dark, bootstrap-dark-page,
-# bootstrap-compact, bootstrap-compact-page, bootstrap5, page
-privatebin_config_main_template: bootstrap
+# bootstrap-compact, bootstrap-compact-page, bootstrap5
+privatebin_config_main_template: bootstrap5
 
 # Specify the info text to display at the bottom right
 # HTML tags are allowed. Use single quotes for HTML attributes.
@@ -254,7 +254,7 @@ privatebin_config_main_email_enabled: true
 # for all (relevant) IPs, the identicon may be used to get the IP of a comment poster.
 #
 # Valid values: none, identicon, jdenticon, vizhash
-privatebin_config_main_icon: identicon
+privatebin_config_main_icon: jdenticon
 
 # Control whether "self" (if "bootstrap5" template is selected) or "none" (if one of
 # the other templates is selected) is set to default-src of "cspheader" config option.
