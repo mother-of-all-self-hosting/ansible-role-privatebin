@@ -73,6 +73,6 @@
         devture_playbook_runtime_messages_list | default([])
         +
         [
-          "Note: As the local PrivateBin instance has been removed, some old data remains in `{{ privatebin_data_path }}`. Feel free to delete it. Unless the 'model' configuration (privatebin_config_model) has been set to 'Filesystem' or 'SQLite', the directory should be empty."
+          "Note: As the local PrivateBin instance has been removed, some old data remains in `" + privatebin_data_path + "`. Feel free to delete it. Unless the 'model' configuration (privatebin_config_model) has been set to 'Filesystem' or 'SQLite', the directory should be empty."
         ]
       }}
