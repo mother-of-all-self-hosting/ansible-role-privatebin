@@ -176,7 +176,10 @@ privatebin_systemd_required_services_list_auto: []
 privatebin_systemd_required_services_list_custom: []
 
 # List of systemd services that the PrivateBin systemd service wants
-privatebin_systemd_wanted_services_list: []
+privatebin_systemd_wanted_services_list: "{{ privatebin_systemd_wanted_services_list_default + privatebin_systemd_wanted_services_list_auto + privatebin_systemd_wanted_services_list_custom }}"
+privatebin_systemd_wanted_services_list_default: []
+privatebin_systemd_wanted_services_list_auto: []
+privatebin_systemd_wanted_services_list_custom: []
 
 # Additional environment variables.
 # See: https://hub.docker.com/r/privatebin/nginx-fpm-alpine
