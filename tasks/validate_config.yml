@@ -16,6 +16,49 @@
     - privatebin_path_prefix
     - privatebin_container_network
 
+- name: Fail if PrivateBin data provider invalid
+  ansible.builtin.fail:
+    msg: >-
+      privatebin_config_model must be 'Filesystem', 'GoogleCloudStorage', 'GoogleCloudStorage', 'SQLite', 'PostgreSQL', or 'S3'
+  when: "privatebin_config_model not in ['Filesystem', 'GoogleCloudStorage', 'GoogleCloudStorage', 'SQLite', 'PostgreSQL', 'S3']"
+
+- name: Fail if required PrivateBin + GoogleCloudStorage integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `GoogleCloudStorage`
+  when: "privatebin_config_model == 'GoogleCloudStorage' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - privatebin_config_model_gcs_bucket
+    - privatebin_config_model_gcs_prefix
+
+- name: Fail if required PrivateBin + MySQL integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `MySQL`
+  when: "privatebin_config_model == 'MySQL' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - privatebin_database_mysql_hostname
+    - privatebin_database_mysql_password
+
+- name: Fail if required PrivateBin + PostgreSQL integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `PostgreSQL`
+  when: "privatebin_config_model == 'PostgreSQL' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - privatebin_database_postgres_hostname
+    - privatebin_database_postgres_password
+
+- name: Fail if required PrivateBin + AWS S3 integration settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `S3`
+  when: "privatebin_config_model == 'S3' and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - privatebin_config_model_s3_bucket
+    - privatebin_config_model_s3_accesskey
+    - privatebin_config_model_s3_secretkey
+
 - name: Run if Traefik is enabled
   when: privatebin_container_labels_traefik_enabled | bool
   block:
