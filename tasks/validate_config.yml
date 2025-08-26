@@ -16,6 +16,36 @@
     - privatebin_path_prefix
     - privatebin_container_network
 
+- name: Fail if PrivateBin default display mode is invalid
+  ansible.builtin.fail:
+    msg: >-
+      privatebin_config_main_defaultformatter must be 'plaintext', 'syntaxhighlighting', or 'markdown'
+  when: "privatebin_config_main_defaultformatter not in ['plaintext', 'syntaxhighlighting', 'markdown']"
+
+- name: Fail if PrivateBin syntax highlighting theme is invalid
+  ansible.builtin.fail:
+    msg: >-
+      privatebin_config_main_syntaxhighlightingtheme must be 'desert', 'doxy', 'prettify', 'sons-of-obsidian', or 'sunburst'
+  when: "privatebin_config_main_syntaxhighlightingtheme not in ['desert', 'doxy', 'prettify', 'sons-of-obsidian', 'sunburst']"
+
+- name: Fail if PrivateBin defalult template is invalid
+  ansible.builtin.fail:
+    msg: >-
+      privatebin_config_main_template must be 'bootstrap', 'bootstrap-page', 'bootstrap-dark', 'bootstrap-dark-page', 'bootstrap-compact', 'bootstrap-compact-page', or 'bootstrap5'
+  when: "privatebin_config_main_template not in ['bootstrap', 'bootstrap-page', 'bootstrap-dark', 'bootstrap-dark-page', 'bootstrap-compact', 'bootstrap-compact-page', 'bootstrap5']"
+
+- name: Fail if PrivateBin identicon generator is invalid
+  ansible.builtin.fail:
+    msg: >-
+      privatebin_config_main_icon must be 'none', 'identicon', 'jdenticon', or 'vizhash'
+  when: "privatebin_config_main_icon not in ['none', 'identicon', 'jdenticon', 'vizhash']"
+
+- name: Fail if PrivateBin compression algorithm is invalid
+  ansible.builtin.fail:
+    msg: >-
+      privatebin_config_main_compression must be 'none' or 'zlib'
+  when: "privatebin_config_main_compression not in ['none', 'zlib']"
+
 - name: Fail if PrivateBin data provider invalid
   ansible.builtin.fail:
     msg: >-
