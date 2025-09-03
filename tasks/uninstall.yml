@@ -44,6 +44,18 @@
         path: "{{ privatebin_container_image_self_build_src_files_path }}"
         state: absent
 
+    - name: Ensure PrivateBin local data path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ privatebin_data_path }}"
+      register: privatebin_data_path_deletion_result
+      changed_when: privatebin_data_path_deletion_result.rc == 0
+
+    - name: Ensure PrivateBin base path does not exist if empty
+      ansible.builtin.command:
+        cmd: "rmdir {{ privatebin_base_path }}"
+      register: privatebin_base_path_deletion_result
+      changed_when: privatebin_base_path_deletion_result.rc == 0
+
     - name: Ensure PrivateBin container network does not exist via community.docker.docker_network
       when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
       community.docker.docker_network:
