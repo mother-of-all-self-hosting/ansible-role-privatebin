@@ -12,6 +12,8 @@
   when: "lookup('ansible.builtin.varnames', ('^' + item.old + '$'), wantlist=True) | length > 0"
   with_items:
     - { "old": "privatebin_http_header_content_permission_policy", "new": "privatebin_http_header_permissions_policy" }
+    - { "old": "privatebin_database_mysql_name", "new": "privatebin_database_name" }
+    - { "old": "privatebin_database_postgres_name", "new": "privatebin_database_name" }
 
 - name: Fail if required PrivateBin settings not defined
   ansible.builtin.fail:

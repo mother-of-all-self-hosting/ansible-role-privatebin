@@ -370,15 +370,12 @@ privatebin_config_model_gcs_uniformacl: false
 privatebin_database_mysql_hostname: ''
 privatebin_database_mysql_username: 'privatebin'
 privatebin_database_mysql_password: ''
-privatebin_database_mysql_name: 'privatebin'
-privatebin_config_model_database_mysql_dsn: 'mysql:host={{ privatebin_database_mysql_hostname }};dbname={{ privatebin_database_mysql_name }};charset=UTF8'
-
-# Specify model configurations for PostgreSQL
 privatebin_database_postgres_hostname: ''
 privatebin_database_postgres_username: 'privatebin'
 privatebin_database_postgres_password: ''
-privatebin_database_postgres_name: 'privatebin'
-privatebin_config_model_database_postgres_dsn: 'pgsql:host={{ privatebin_database_postgres_hostname }};dbname={{ privatebin_database_postgres_name }}'
+privatebin_database_name: 'privatebin'
+privatebin_config_model_database_mysql_dsn: 'mysql:host={{ privatebin_database_mysql_hostname }};dbname={{ privatebin_database_name }};charset=UTF8'
+privatebin_config_model_database_postgres_dsn: 'pgsql:host={{ privatebin_database_postgres_hostname }};dbname={{ privatebin_database_name }}'
 
 # Specify model configurations for AWS S3
 privatebin_config_model_s3_region: 'eu-central-1'

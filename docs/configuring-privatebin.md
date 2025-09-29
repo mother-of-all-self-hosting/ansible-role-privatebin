@@ -87,7 +87,7 @@ privatebin_database_mysql_username: 'privatebin'
 privatebin_database_mysql_password: 'some-password'
 
 # Set a database name
-privatebin_database_mysql_name: 'privatebin'
+privatebin_database_name: 'privatebin'
 ```
 
 You can also configure Data Source Name (DSN) with `privatebin_config_model_database_mysql_dsn`. See [`defaults/main.yml`](../defaults/main.yml) for its default value.
@@ -109,7 +109,7 @@ privatebin_database_postgres_username: 'privatebin'
 privatebin_database_postgres_password: 'some-password'
 
 # Set a database name
-privatebin_database_postgres_name: 'privatebin'
+privatebin_database_name: 'privatebin'
 ```
 
 You can also configure Data Source Name (DSN) with `privatebin_config_model_database_postgres_dsn`. See [`defaults/main.yml`](../defaults/main.yml) for its default value.
