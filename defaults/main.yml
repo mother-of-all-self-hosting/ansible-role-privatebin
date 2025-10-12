@@ -16,7 +16,7 @@ privatebin_base_path: "/{{ privatebin_identifier }}"
 privatebin_data_path: "{{ privatebin_base_path }}/data"
 
 # renovate: datasource=docker depName=privatebin/nginx-fpm-alpine versioning=semver
-privatebin_version: 2.0.0
+privatebin_version: 2.0.1
 
 # This is used to specify, on which tag to built an image.
 # See: https://github.com/PrivateBin/docker-nginx-fpm-alpine/tags
