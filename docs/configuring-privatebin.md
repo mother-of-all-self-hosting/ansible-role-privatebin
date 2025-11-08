@@ -78,7 +78,7 @@ To use MySQL for a storage, add the following configuration to your `vars.yml` f
 privatebin_config_model: MySQL
 
 # Set a hostname of a MySQL instance
-privatebin_database_mysql_hostname: ''
+privatebin_database_mysql_hostname: ""
 
 # Set a username of a MySQL instance
 privatebin_database_mysql_username: 'privatebin'
@@ -100,7 +100,7 @@ To use PostgreSQL for a storage, add the following configuration to your `vars.y
 privatebin_config_model: PostgreSQL
 
 # Set a hostname of a PostgreSQL instance
-privatebin_database_postgres_hostname: ''
+privatebin_database_postgres_hostname: ""
 
 # Set a username of a PostgreSQL instance
 privatebin_database_postgres_username: 'privatebin'
@@ -213,7 +213,7 @@ To use a public shortener, add the following configuration to your `vars.yml` fi
 
 ```yaml
 # Example: https://shortener.example.com/api?link=
-privatebin_config_main_urlshortener: ''
+privatebin_config_main_urlshortener: ""
 ```
 
 For URL formats, see: [https://github.com/PrivateBin/PrivateBin/wiki/Configuration#urlshortener](https://github.com/PrivateBin/PrivateBin/wiki/Configuration#urlshortener)
@@ -226,7 +226,7 @@ If you are using a private YOURLS instance, you might probably want to disallow 
 privatebin_config_yourlsapi_enabled: true
 
 # Set the "signature" (access key) issued by the YOURLS instance for using the account
-privatebin_config_yourlsapi_signature: ''
+privatebin_config_yourlsapi_signature: ""
 
 # Set URL of the YOURLS instance's API, called to shorten a paste URL
 # Example: https://your-yourls-instance.com/yourls-api.php
