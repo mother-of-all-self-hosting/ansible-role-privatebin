@@ -181,10 +181,6 @@ privatebin_systemd_wanted_services_list_default: []
 privatebin_systemd_wanted_services_list_auto: []
 privatebin_systemd_wanted_services_list_custom: []
 
-# Additional environment variables.
-# See: https://hub.docker.com/r/privatebin/nginx-fpm-alpine
-privatebin_environment_variables_additional_variables: ""
-
 # Specify an instance name to be displayed on the UI
 privatebin_config_main_name: PrivateBin
 
@@ -392,3 +388,10 @@ privatebin_config_sri: |
 #  js/privatebin.js = "sha512-[…]"
 #  js/legacy.js = "sha512-[…]"
 #  …
+
+# Specify the timezone
+privatebin_environment_variables_tz: UTC
+
+# Additional environment variables.
+# See: https://hub.docker.com/r/privatebin/nginx-fpm-alpine
+privatebin_environment_variables_additional_variables: ""
