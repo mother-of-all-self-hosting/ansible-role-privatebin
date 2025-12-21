@@ -31,7 +31,7 @@ privatebin_hostname: ""
 # Specify URI scheme for privatebin_config_main_basepath.
 privatebin_scheme: https
 
-# The path at which PrivateBin is exposed.
+# The path at which PrivateBin is served.
 # This value must either be `/` or not end with a slash (e.g. `/privatebin`).
 privatebin_path_prefix: /
 
