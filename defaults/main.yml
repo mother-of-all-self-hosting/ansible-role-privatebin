@@ -116,11 +116,11 @@ privatebin_container_labels_traefik_additional_response_headers_custom: {}
 #
 # Example:
 # privatebin_container_labels_additional_labels_custom: |
-#   my.label=1
-#   another.label="here"
-privatebin_container_labels_additional_labels: "{{ privatebin_container_labels_additional_labels_auto | combine(privatebin_container_labels_additional_labels_custom) }}"
-privatebin_container_labels_additional_labels_auto: {}
-privatebin_container_labels_additional_labels_custom: {}
+#   - my.label=1
+#   - another.label="here"
+privatebin_container_labels_additional_labels: "{{ privatebin_container_labels_additional_labels_auto + privatebin_container_labels_additional_labels_custom }}"
+privatebin_container_labels_additional_labels_auto: []
+privatebin_container_labels_additional_labels_custom: []
 
 # A list of extra arguments to pass to the container (`docker create` command)
 privatebin_container_extra_arguments: "{{ privatebin_container_extra_arguments_auto + privatebin_container_extra_arguments_custom }}"

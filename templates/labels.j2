@@ -56,4 +56,6 @@ traefik.http.routers.{{ privatebin_identifier }}.tls.certResolver={{ privatebin_
 traefik.http.services.{{ privatebin_identifier }}.loadbalancer.server.port={{ privatebin_container_http_port }}
 {% endif %}
 
-{{ privatebin_container_labels_additional_labels }}
+{% for arg in privatebin_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}
