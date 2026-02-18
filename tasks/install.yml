@@ -27,14 +27,14 @@
     - labels
   register: privatebin_support_files_result
 
-- name: Ensure PrivateBin config file installed
+- name: Ensure PrivateBin configuration file installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/config.sample.php.j2"
     dest: "{{ privatebin_base_path }}/config.php"
     mode: "0640"
     owner: "{{ privatebin_uid }}"
     group: "{{ privatebin_gid }}"
-  register: privatebin_config_result
+  register: privatebin_config_file_result
 
 - name: Run if self-building of PrivateBin container image is not enabled
   when: "not privatebin_container_image_self_build | bool"
@@ -119,7 +119,7 @@
       {{
         privatebin_support_files_result.changed | default(false)
         or privatebin_systemd_service_result.changed | default(false)
-        or privatebin_config_result.changed | default(false)
+        or privatebin_config_file_result.changed | default(false)
         or privatebin_container_image_pull_result.changed | default(false)
         or privatebin_container_image_build_result.changed | default(false)
       }}

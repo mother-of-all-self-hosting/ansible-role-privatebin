@@ -32,7 +32,7 @@
         - env
         - labels
 
-    - name: Ensure PrivateBin config file does not exist
+    - name: Ensure PrivateBin configuration file does not exist
       ansible.builtin.file:
         path: "{{ privatebin_base_path }}/{{ item }}"
         state: absent
