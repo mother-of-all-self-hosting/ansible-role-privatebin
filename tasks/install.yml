@@ -118,8 +118,8 @@
     privatebin_restart_necessary: >-
       {{
         privatebin_support_files_result.changed | default(false)
-        or privatebin_systemd_service_result.changed | default(false)
         or privatebin_config_file_result.changed | default(false)
+        or privatebin_systemd_service_result.changed | default(false)
         or privatebin_container_image_pull_result.changed | default(false)
         or privatebin_container_image_build_result.changed | default(false)
       }}
