@@ -393,15 +393,15 @@ privatebin_config_trafic_creators: ""
 # See: https://github.com/PrivateBin/PrivateBin/wiki/Configuration#model
 # Also: https://github.com/PrivateBin/PrivateBin/blob/master/cfg/conf.sample.php
 #
-# Valid values: Filesystem, GoogleCloudStorage, MySQL, PostgreSQL, SQLite, S3
-privatebin_config_model: Filesystem
+# Valid values: filesystem, gcs, mysql, postgres, sqlite, s3
+privatebin_config_model: filesystem
 
 # Specify model configurations for GoogleCloudStorage
 privatebin_config_model_gcs_bucket: ""
 privatebin_config_model_gcs_prefix: ""
 privatebin_config_model_gcs_uniformacl: false
 
-# Specify model configurations for MySQL
+# Specify model configurations for MySQL or Postgres
 privatebin_database_mysql_hostname: ""
 privatebin_database_mysql_username: 'privatebin'
 privatebin_database_mysql_password: ""

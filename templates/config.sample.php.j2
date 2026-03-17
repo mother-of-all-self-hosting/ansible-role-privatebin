@@ -94,13 +94,13 @@ limit = 300
 
 batchsize = 10
 
-{% if privatebin_config_model == 'Filesystem' %}
+{% if privatebin_config_model == 'filesystem' %}
 [model]
 class = Filesystem
 [model_options]
 dir = PATH "data"
 
-{% elif privatebin_config_model == 'GoogleCloudStorage' %}
+{% elif privatebin_config_model == 'gcs' %}
 [model]
 class = GoogleCloudStorage
 [model_options]
@@ -108,7 +108,7 @@ bucket = {{ privatebin_config_model_gcs_bucket }}
 prefix = {{ privatebin_config_model_gcs_prefix }}
 uniformacl = {{ privatebin_config_model_gcs_uniformacl | to_json }}
 
-{% elif privatebin_config_model == 'MySQL' %}
+{% elif privatebin_config_model == 'mysql' %}
 [model]
 class = Database
 [model_options]
@@ -118,7 +118,7 @@ usr = {{ privatebin_database_mysql_username }}
 pwd = {{ privatebin_database_mysql_password }}
 opt[12] = true    ; PDO::ATTR_PERSISTENT
 
-{% elif privatebin_config_model == 'SQLite' %}
+{% elif privatebin_config_model == 'sqlite' %}
 [model]
 class = Database
 [model_options]
@@ -127,7 +127,7 @@ usr = null
 pwd = null
 opt[12] = true  ; PDO::ATTR_PERSISTENT
 
-{% elif privatebin_config_model == 'PostgreSQL' %}
+{% elif privatebin_config_model == 'postgres' %}
 [model]
 class = Database
 [model_options]
@@ -137,7 +137,7 @@ usr = {{ privatebin_database_postgres_username }}
 pwd = {{ privatebin_database_postgres_password }}
 opt[12] = true    ; PDO::ATTR_PERSISTENT
 
-{% elif privatebin_config_model == 'S3' %}
+{% elif privatebin_config_model == 's3' %}
 [model]
 class = S3Storage
 [model_options]

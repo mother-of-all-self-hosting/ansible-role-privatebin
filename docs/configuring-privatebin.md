@@ -58,16 +58,16 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 
 ### Configure a storage for pastes
 
-The role provides these storage backend options: local filesystem (default), MySQL, PostgreSQL, SQLite, Google Cloud Storage, and Amazon S3.
+The role provides these storage backend options: local filesystem (default), MySQL, Postgres, SQLite, Google Cloud Storage, and Amazon S3.
 
-💡 If you are looking for Ansible roles for [MariaDB](https://mariadb.org/) and PostgreSQL, you might be interested in [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb) and [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
+💡 If you are looking for Ansible roles for [MariaDB](https://mariadb.org/) and Postgres, you might be interested in [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb) and [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
 #### SQLite
 
 To use SQLite database for a storage, add the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-privatebin_config_model: SQLite
+privatebin_config_model: sqlite
 ```
 
 #### MySQL
@@ -75,7 +75,7 @@ privatebin_config_model: SQLite
 To use MySQL for a storage, add the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-privatebin_config_model: MySQL
+privatebin_config_model: mysql
 
 # Set a hostname of a MySQL instance
 privatebin_database_mysql_hostname: ""
@@ -92,20 +92,20 @@ privatebin_database_name: 'privatebin'
 
 You can also configure Data Source Name (DSN) with `privatebin_config_model_database_mysql_dsn`. See [`defaults/main.yml`](../defaults/main.yml) for its default value.
 
-#### PostgreSQL
+#### Postgres
 
-To use PostgreSQL for a storage, add the following configuration to your `vars.yml` file (adapt to your needs):
+To use Postgres for a storage, add the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-privatebin_config_model: PostgreSQL
+privatebin_config_model: postgres
 
-# Set a hostname of a PostgreSQL instance
+# Set a hostname of a Postgres instance
 privatebin_database_postgres_hostname: ""
 
-# Set a username of a PostgreSQL instance
+# Set a username of a Postgres instance
 privatebin_database_postgres_username: 'privatebin'
 
-# Set a hostname of a PostgreSQL instance
+# Set a hostname of a Postgres instance
 privatebin_database_postgres_password: 'some-password'
 
 # Set a database name
@@ -119,7 +119,7 @@ You can also configure Data Source Name (DSN) with `privatebin_config_model_data
 To use Google Cloud Storage, add the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-privatebin_config_model: GoogleCloudStorage
+privatebin_config_model: gcs
 
 # Set a Google Cloud Storage bucket
 privatebin_config_model_gcs_bucket: 'my-private-bin'
@@ -135,7 +135,7 @@ Before using it, authentication should be set up with [Application Default Crede
 To use Amazon S3 object storage, add the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-privatebin_config_model: S3
+privatebin_config_model: s3
 
 # Set S3 region
 privatebin_config_model_s3_region: 'eu-central-1'

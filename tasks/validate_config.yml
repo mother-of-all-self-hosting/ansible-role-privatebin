@@ -60,14 +60,14 @@
 - name: Fail if PrivateBin data provider invalid
   ansible.builtin.fail:
     msg: >-
-      privatebin_config_model must be 'Filesystem', 'GoogleCloudStorage', 'GoogleCloudStorage', 'SQLite', 'PostgreSQL', or 'S3'
-  when: "privatebin_config_model not in ['Filesystem', 'GoogleCloudStorage', 'GoogleCloudStorage', 'SQLite', 'PostgreSQL', 'S3']"
+      privatebin_config_model must be 'filesystem', 'gcs', 'gcs', 'sqlite', 'postgres', or 's3'
+  when: "privatebin_config_model not in ['filesystem', 'gcs', 'gcs', 'sqlite', 'postgres', 's3']"
 
 - name: Fail if required PrivateBin + GoogleCloudStorage integration settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `GoogleCloudStorage`
-  when: "privatebin_config_model == 'GoogleCloudStorage' and lookup('vars', item, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `gcs`
+  when: "privatebin_config_model == 'gcs' and lookup('vars', item, default='') | string | length == 0"
   with_items:
     - privatebin_config_model_gcs_bucket
     - privatebin_config_model_gcs_prefix
@@ -75,17 +75,17 @@
 - name: Fail if required PrivateBin + MySQL integration settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `MySQL`
-  when: "privatebin_config_model == 'MySQL' and lookup('vars', item, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `mysql`
+  when: "privatebin_config_model == 'mysql' and lookup('vars', item, default='') | string | length == 0"
   with_items:
     - privatebin_database_mysql_hostname
     - privatebin_database_mysql_password
 
-- name: Fail if required PrivateBin + PostgreSQL integration settings not defined
+- name: Fail if required PrivateBin + Postgres integration settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `PostgreSQL`
-  when: "privatebin_config_model == 'PostgreSQL' and lookup('vars', item, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `postgres`
+  when: "privatebin_config_model == 'postgres' and lookup('vars', item, default='') | string | length == 0"
   with_items:
     - privatebin_database_postgres_hostname
     - privatebin_database_postgres_password
@@ -93,8 +93,8 @@
 - name: Fail if required PrivateBin + AWS S3 integration settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `S3`
-  when: "privatebin_config_model == 'S3' and lookup('vars', item, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `s3`
+  when: "privatebin_config_model == 's3' and lookup('vars', item, default='') | string | length == 0"
   with_items:
     - privatebin_config_model_s3_bucket
     - privatebin_config_model_s3_accesskey
