@@ -60,8 +60,8 @@
 - name: Fail if PrivateBin data provider invalid
   ansible.builtin.fail:
     msg: >-
-      privatebin_config_model must be 'filesystem', 'gcs', 'gcs', 'sqlite', 'postgres', or 's3'
-  when: "privatebin_config_model not in ['filesystem', 'gcs', 'gcs', 'sqlite', 'postgres', 's3']"
+      privatebin_config_model must be 'filesystem', 'gcs', 'mysql', 'sqlite', 'postgres', or 's3'
+  when: "privatebin_config_model not in ['filesystem', 'gcs', 'mysql', 'sqlite', 'postgres', 's3']"
 
 - name: Fail if required PrivateBin + GoogleCloudStorage integration settings not defined
   ansible.builtin.fail:
