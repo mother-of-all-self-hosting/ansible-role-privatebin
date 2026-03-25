@@ -112,7 +112,11 @@ uniformacl = {{ privatebin_config_model_gcs_uniformacl | to_json }}
 [model]
 class = Database
 [model_options]
+{% if privatebin_database_mysql_socket_enabled %}
+dsn = "{{ privatebin_config_model_database_mysql_dsn_socket }}"
+{% else %}
 dsn = "{{ privatebin_config_model_database_mysql_dsn }}"
+{% endif %}
 tbl = "privatebin_"  ; table prefix
 usr = {{ privatebin_database_mysql_username }}
 pwd = {{ privatebin_database_mysql_password }}
@@ -131,7 +135,11 @@ opt[12] = true  ; PDO::ATTR_PERSISTENT
 [model]
 class = Database
 [model_options]
+{% if privatebin_database_postgres_socket_enabled %}
+dsn = "{{ privatebin_config_model_database_postgres_dsn_socket }}"
+{% else %}
 dsn = "{{ privatebin_config_model_database_postgres_dsn }}"
+{% endif %}
 tbl = "privatebin_"     ; table prefix
 usr = {{ privatebin_database_postgres_username }}
 pwd = {{ privatebin_database_postgres_password }}

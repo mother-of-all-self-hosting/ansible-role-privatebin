@@ -1,5 +1,7 @@
-# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 MASH project contributors
+# SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -63,6 +65,64 @@
       privatebin_config_model must be 'filesystem', 'gcs', 'mysql', 'sqlite', 'postgres', or 's3'
   when: "privatebin_config_model not in ['filesystem', 'gcs', 'mysql', 'sqlite', 'postgres', 's3']"
 
+- name: Run if PrivateBin + MySQL integration is enabled
+  when: privatebin_config_model == 'mysql'
+  block:
+    - name: Fail if required PrivateBin + MySQL integration settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `mysql`
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - privatebin_database_mysql_password
+
+    - name: Fail if MySQL socket host path for PrivateBin is missing when Unix socket is enabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `privatebin_database_mysql_socket_path_host` when `privatebin_config_model` is `mysql`
+          and `privatebin_database_mysql_socket_enabled` is `true`.
+      when: >-
+        privatebin_database_mysql_socket_enabled and
+        privatebin_database_mysql_socket_path_host | string | length == 0
+
+    - name: Fail if MySQL hostname for PrivateBin is missing when Unix socket is disabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `privatebin_database_mysql_hostname` when `privatebin_config_model` is `mysql`
+          and `privatebin_database_mysql_socket_enabled` is `false`.
+      when: >-
+        not privatebin_database_mysql_socket_enabled and
+        privatebin_database_mysql_hostname | string | length == 0
+
+- name: Run if PrivateBin + Postgres integration is enabled
+  when: privatebin_config_model == 'postgres'
+  block:
+    - name: Fail if required PrivateBin + Postgres integration settings not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `postgres`
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - privatebin_database_postgres_password
+
+    - name: Fail if Postgres socket host path for PrivateBin is missing when Unix socket is enabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `privatebin_database_postgres_socket_path_host` when `privatebin_config_model` is `postgres`
+          and `privatebin_database_postgres_socket_enabled` is `true`.
+      when: >-
+        privatebin_database_postgres_socket_enabled and
+        privatebin_database_postgres_socket_path_host | string | length == 0
+
+    - name: Fail if Postgres hostname for PrivateBin is missing when Unix socket is disabled
+      ansible.builtin.fail:
+        msg: >-
+          You need to define `privatebin_database_postgres_hostname` when `privatebin_config_model` is `postgres`
+          and `privatebin_database_postgres_socket_enabled` is `false`.
+      when: >-
+        not privatebin_database_postgres_socket_enabled and
+        privatebin_database_postgres_hostname | string | length == 0
+
 - name: Fail if required PrivateBin + GoogleCloudStorage integration settings not defined
   ansible.builtin.fail:
     msg: >-
@@ -71,24 +131,6 @@
   with_items:
     - privatebin_config_model_gcs_bucket
     - privatebin_config_model_gcs_prefix
-
-- name: Fail if required PrivateBin + MySQL integration settings not defined
-  ansible.builtin.fail:
-    msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `mysql`
-  when: "privatebin_config_model == 'mysql' and lookup('vars', item, default='') | string | length == 0"
-  with_items:
-    - privatebin_database_mysql_hostname
-    - privatebin_database_mysql_password
-
-- name: Fail if required PrivateBin + Postgres integration settings not defined
-  ansible.builtin.fail:
-    msg: >-
-      You need to define a required configuration setting (`{{ item }}`) when `privatebin_config_model` is `postgres`
-  when: "privatebin_config_model == 'postgres' and lookup('vars', item, default='') | string | length == 0"
-  with_items:
-    - privatebin_database_postgres_hostname
-    - privatebin_database_postgres_password
 
 - name: Fail if required PrivateBin + AWS S3 integration settings not defined
   ansible.builtin.fail:

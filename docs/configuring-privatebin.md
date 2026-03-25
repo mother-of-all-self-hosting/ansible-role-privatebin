@@ -1,17 +1,20 @@
 <!--
-SPDX-FileCopyrightText: 2020 - 2024 MDAD project contributors
-SPDX-FileCopyrightText: 2020 - 2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2020 Aaron Raimist
 SPDX-FileCopyrightText: 2020 Chris van Dijk
 SPDX-FileCopyrightText: 2020 Dominik Zajac
 SPDX-FileCopyrightText: 2020 Mickaël Cornière
+SPDX-FileCopyrightText: 2020-2024 MDAD project contributors
+SPDX-FileCopyrightText: 2020-2024 Slavi Pantaleev
 SPDX-FileCopyrightText: 2022 François Darveau
 SPDX-FileCopyrightText: 2022 Julian Foad
 SPDX-FileCopyrightText: 2022 Warren Bailey
+SPDX-FileCopyrightText: 2023 Alejandro AR
 SPDX-FileCopyrightText: 2023 Antonis Christofides
 SPDX-FileCopyrightText: 2023 Felix Stupp
+SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
 SPDX-FileCopyrightText: 2023 Pierre 'McFly' Marty
-SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2024 Thomas Miceli
+SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -151,6 +154,30 @@ privatebin_config_model_s3_accesskey: 'access key id'
 
 # Set a S3 secret access key ID
 privatebin_config_model_s3_secretkey: 'secret access key'
+```
+
+### Configuring connection to database server (optional)
+
+By default the role is configured to establish connection with the database server via the Unix socket. You can mount the Unix socket by adding the following configuration to your `vars.yml` file:
+
+```yaml
+# Specify the path to the MySQL compatible server's Unix socket path on the host (bind-mount source)
+privatebin_database_mysql_socket_path_host: ""
+
+# Specify the path to the Postgres Unix socket path on the host (bind-mount source)
+privatebin_database_postgres_socket_path_host: ""
+```
+
+Setting it enables to connect to the database server via Unix socket mounted in the container.
+
+If TCP connection is preferred, connection via the Unix socket can be disabled by adding the following configuration to your `vars.yml` file:
+
+```yaml
+# Disable the connection to the MySQL compatible server via a Unix socket
+privatebin_database_mysql_socket_enabled: false
+
+# Disable the connection to the Postgres server via a Unix socket
+privatebin_database_postgres_socket_enabled: false
 ```
 
 ### Configure the discussion feature (optional)
