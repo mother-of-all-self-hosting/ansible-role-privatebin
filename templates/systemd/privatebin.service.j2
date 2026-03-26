@@ -36,10 +36,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --env-file={{ privatebin_base_path }}/env \
       --label-file={{ privatebin_base_path }}/labels \
       --mount type=bind,src={{ privatebin_base_path }}/config.php,dst=/srv/cfg/conf.php,ro \
-      {% if privatebin_database_mysql_socket_enabled %}
+      {% if privatebin_database_mysql_socket_enabled and privatebin_database_mysql_socket_path_host != '' %}
       --mount type=bind,src={{ privatebin_database_mysql_socket_path_host }},dst={{ privatebin_database_mysql_socket_path_container }} \
       {% endif %}
-      {% if privatebin_database_postgres_socket_enabled %}
+      {% if privatebin_database_postgres_socket_enabled and privatebin_database_postgres_socket_path_host != '' %}
       --mount type=bind,src={{ privatebin_database_postgres_socket_path_host }},dst={{ privatebin_database_postgres_socket_path_container }} \
       {% endif %}
       {% if privatebin_container_additional_volumes | length == 0 %}
