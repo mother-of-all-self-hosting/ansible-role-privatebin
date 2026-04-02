@@ -156,7 +156,7 @@ privatebin_config_model_s3_accesskey: 'access key id'
 privatebin_config_model_s3_secretkey: 'secret access key'
 ```
 
-### Configuring connection to database server (optional)
+### Configuring connection to the database server (optional)
 
 By default the role is configured to establish connection with the database server via the Unix socket. You can mount the Unix socket by adding the following configuration to your `vars.yml` file:
 
