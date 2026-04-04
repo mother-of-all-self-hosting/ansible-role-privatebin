@@ -53,6 +53,10 @@ urlshortener = {{ privatebin_config_main_urlshortener }}
 urlshortener = "${basepath}?shortenviayourls&link="
 {% endif %}
 
+{% if privatebin_config_main_urlshortener %}
+shortenbydefault = {{ privatebin_config_main_shortenbydefault }}
+{% endif %}
+
 qrcode = {{ privatebin_config_main_qrcode_enabled | to_json }}
 
 email = {{ privatebin_config_main_email_enabled | to_json }}
@@ -146,6 +150,12 @@ version = {{ privatebin_config_model_s3_version }}
 bucket = {{ privatebin_config_model_s3_bucket }}
 accesskey = {{ privatebin_config_model_s3_accesskey }}
 secretkey = {{ privatebin_config_model_s3_secretkey }}
+{% endif %}
+
+{% if privatebin_config_shrink_enabled %}
+[shlink]
+apiurl = {{ privatebin_config_shlink_apiurl }}
+apikey = {{ privatebin_config_shlink_apikey }}
 {% endif %}
 
 {% if privatebin_config_yourlsapi_enabled %}

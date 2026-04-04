@@ -255,8 +255,8 @@ privatebin_config_main_defaultformatter: plaintext
 privatebin_config_main_syntaxhighlightingtheme: "sons-of-obsidian"
 
 # Control the size limit per paste or comment in bytes
-# Default: 10 Mebibytes
-privatebin_config_main_sizelimit: 10485760
+# Default: 10 Megabytes
+privatebin_config_main_sizelimit: 10000000
 
 # Control whether the template selection menu is enabled
 privatebin_config_main_templateselection: false
@@ -359,6 +359,15 @@ privatebin_config_expire_default: 1week
 #
 # Example: https://shortener.example.com/api?link=
 privatebin_config_main_urlshortener: ""
+
+# Control whether the URL is shorten by default when a new document is created
+# Note this requires `privatebin_config_main_urlshortener` to be set to work
+privatebin_config_main_shortenbydefault: false
+
+# Control whether shlink implementation is enabled
+privatebin_config_shrink_enabled: false
+privatebin_config_shlink_apiurl: ""
+privatebin_config_shlink_apikey: ""
 
 # Specify an API access key and URL of a private YOURLS instance
 #
