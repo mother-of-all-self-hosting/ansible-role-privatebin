@@ -440,13 +440,14 @@ privatebin_database_postgres_socket_path_container: /run-postgres
 privatebin_database_postgres_socket_path_host: ""
 
 # Specify database host address or absolute path for Unix socket
-privatebin_config_model_database_mysql_dsn: |
+privatebin_config_model_database_mysql_dsn: |-
   {%- if privatebin_database_mysql_socket_enabled -%}
   mysql:dbname={{ privatebin_database_name }};unix_socket={{ privatebin_database_mysql_socket_path_container }}/mysqld.sock;charset=UTF8
   {%- else -%}
   mysql:host={{ privatebin_database_mysql_hostname }};dbname={{ privatebin_database_name }};charset=UTF8
   {%- endif -%}
-privatebin_config_model_database_postgres_dsn: |
+
+privatebin_config_model_database_postgres_dsn: |-
   {%- if privatebin_database_postgres_socket_enabled -%}
   pgsql:host={{ privatebin_database_postgres_socket_path_container }};dbname={{ privatebin_database_name }}
   {%- else -%}
