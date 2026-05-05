@@ -16,6 +16,7 @@
     - { "old": "privatebin_http_header_content_permission_policy", "new": "privatebin_http_header_permissions_policy" }
     - { "old": "privatebin_database_mysql_name", "new": "privatebin_database_name" }
     - { "old": "privatebin_database_postgres_name", "new": "privatebin_database_name" }
+    - { "old": "privatebin_container_image_force_pull", "new": "<removed> (the new community.docker.docker_image_pull module handles this natively)" }
 
 - name: Fail if required PrivateBin settings not defined
   ansible.builtin.fail:

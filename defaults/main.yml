@@ -41,7 +41,6 @@ privatebin_container_image_tag: "{{ privatebin_version }}"
 privatebin_container_image_registry_prefix: "{{ privatebin_container_image_registry_prefix_upstream }}"
 privatebin_container_image_registry_prefix_upstream: "{{ privatebin_container_image_registry_prefix_upstream_default }}"
 privatebin_container_image_registry_prefix_upstream_default: docker.io/
-privatebin_container_image_force_pull: "{{ privatebin_container_image.endswith(':latest') }}"
 
 privatebin_container_image_self_build: false
 privatebin_container_image_self_build_name: "privatebin/docker-nginx-fpm-alpine:{{ privatebin_container_image_self_build_repo_version }}"
