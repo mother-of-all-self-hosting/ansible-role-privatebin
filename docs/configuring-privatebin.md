@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 This is an [Ansible](https://www.ansible.com/) role which installs [PrivateBin](https://privatebin.info) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
-PrivateBin is a minimalist, open source online pastebin where the server has zero knowledge of pasted data.
+PrivateBin is a minimalist, open-source online pastebin where the server has zero knowledge of pasted data.
 
 See the project's [documentation](https://github.com/PrivateBin/PrivateBin/tree/master/doc) to learn what PrivateBin does and why it might be useful to you.
 
