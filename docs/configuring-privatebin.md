@@ -208,7 +208,7 @@ privatebin_config_main_fileupload_enabled: true
 
 ### Configure the burn-after-reading feature (optional)
 
-PrivateBin implements the burn-after-reading feature, which automatically deletes a paste as soon as it is opened. You can have the UI pre-select this feature by adding the following configuration to your `vars.yml` file:
+PrivateBin implements the burn-after-reading feature, which automatically deletes a paste as soon as it is opened. You can have the UI preselect this feature by adding the following configuration to your `vars.yml` file:
 
 ```yaml
 privatebin_config_main_burnafterreadingselected_enabled: true

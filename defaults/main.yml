@@ -233,7 +233,7 @@ privatebin_config_main_basepath: "{{ privatebin_scheme }}://{{ privatebin_hostna
 # Note that existing discussions will remain visible after setting this to "false"
 privatebin_config_main_discussion_enabled: true
 
-# Control whether the discussion feature is pre-selected
+# Control whether the discussion feature is preselected
 privatebin_config_main_opendiscussion_enabled: false
 
 # Control whether the date and time are displayed on a comment
@@ -245,10 +245,10 @@ privatebin_config_main_password_enabled: true
 # Control whether the file upload feature is enabled
 privatebin_config_main_fileupload_enabled: false
 
-# Control whether the burn-after-reading feature is pre-selected
+# Control whether the burn-after-reading feature is preselected
 privatebin_config_main_burnafterreadingselected_enabled: false
 
-# Specify the display mode to pre-select by default
+# Specify the display mode to preselect by default
 # Valid values: plaintext, syntaxhighlighting, markdown
 privatebin_config_main_defaultformatter: plaintext
 
@@ -342,7 +342,7 @@ privatebin_config_expire_options: |
   1year = 31536000
   never = 0
 
-# Control the default value of expiration pre-selected by default
+# Control the default value of expiration preselected by default
 # Valid values: ones in privatebin_config_expire_options
 privatebin_config_expire_default: 1week
 
