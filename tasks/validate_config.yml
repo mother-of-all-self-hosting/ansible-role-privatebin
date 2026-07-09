@@ -21,15 +21,14 @@
 - name: Fail if required PrivateBin settings not defined
   ansible.builtin.fail:
     msg: >-
-      You need to define a required configuration setting (`{{ item.name }}`).
-  when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
   with_items:
-    - { "name": "privatebin_uid", when: true }
-    - { "name": "privatebin_gid", when: true }
-    - { "name": "privatebin_hostname", when: true }
-    - { "name": "privatebin_path_prefix", when: true }
-    - { "name": "privatebin_container_network", when: true }
-    - { "name": "privatebin_container_labels_traefik_middleware_basic_auth_users", when: "{{ privatebin_container_labels_traefik_middleware_basic_auth_enabled }}" }
+    - privatebin_uid
+    - privatebin_gid
+    - privatebin_hostname
+    - privatebin_path_prefix
+    - privatebin_container_network
 
 - name: Fail if PrivateBin default display mode is invalid
   ansible.builtin.fail:
@@ -150,11 +149,12 @@
     - name: Fail if Traefik settings required for PrivateBin are not defined
       ansible.builtin.fail:
         msg: >-
-          You need to define a required configuration setting (`{{ item }}`).
-      when: "lookup('vars', item, default='') | string | length == 0"
+          You need to define a required configuration setting (`{{ item.name }}`).
+      when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
       with_items:
-        - privatebin_container_labels_traefik_hostname
-        - privatebin_container_labels_traefik_path_prefix
+        - { "name": "privatebin_container_labels_traefik_hostname", when: true }
+        - { "name": "privatebin_container_labels_traefik_path_prefix", when: true }
+        - { "name": "privatebin_container_labels_traefik_middleware_basic_auth_users", when: "{{ privatebin_container_labels_traefik_middleware_basic_auth_enabled }}" }
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
     # Knowing that `privatebin_container_labels_traefik_path_prefix` does not end with a slash
