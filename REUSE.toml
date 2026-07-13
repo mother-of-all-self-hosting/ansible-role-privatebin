@@ -11,8 +11,11 @@ path = [
     ".github/renovate.json",
     ".gitignore",
     ".pre-commit-config.yaml",
+    ".python-version",
     ".yamllint.yml",
     "meta/main.yml",
+    "molecule/**/requirements.yml",
+    "molecule/requirements.txt"
     "templates/config.sample.php.j2"
 ]
 SPDX-FileCopyrightText = "NONE"
