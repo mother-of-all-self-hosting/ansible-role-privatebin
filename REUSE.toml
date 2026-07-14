@@ -15,7 +15,7 @@ path = [
     ".yamllint.yml",
     "meta/main.yml",
     "molecule/**/requirements.yml",
-    "molecule/requirements.txt"
+    "molecule/requirements.txt",
     "templates/config.sample.php.j2"
 ]
 SPDX-FileCopyrightText = "NONE"
