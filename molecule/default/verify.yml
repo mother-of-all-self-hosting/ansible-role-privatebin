@@ -23,6 +23,12 @@
         fail_msg: "privatebin.service not active ({{ privatebin_service.status.ActiveState }})"
         success_msg: "privatebin.service is active"
 
+    - name: Retrieve PrivateBin service log for debugging
+      when: privatebin_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu privatebin.service
+      changed_when: false
+
     - name: Wait for PrivateBin HTTP endpoint to respond (up to 10m)
       ansible.builtin.uri:
         url: "http://localhost:8080/"

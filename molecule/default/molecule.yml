@@ -27,6 +27,10 @@ provisioner:
   inventory:
     group_vars:
       all:
+        # Helper variables
+        privatebin_debug_service_enabled: false
+
+        # Variables for PrivateBin
         privatebin_uid: 1000
         privatebin_gid: 1000
         privatebin_hostname: privatebin
