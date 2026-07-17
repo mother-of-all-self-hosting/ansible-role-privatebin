@@ -33,7 +33,8 @@ provisioner:
         # Variables for PrivateBin
         privatebin_uid: 1000
         privatebin_gid: 1000
-        privatebin_hostname: privatebin
+        privatebin_scheme: http
+        privatebin_hostname: localhost
         privatebin_container_labels_traefik_enabled: false
         privatebin_container_http_host_bind_port: 8080
   env:
