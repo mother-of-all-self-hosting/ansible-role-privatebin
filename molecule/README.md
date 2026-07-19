@@ -49,6 +49,10 @@ Currently these testing scenarios are available:
 
 Tests a standard PrivateBin installation.
 
+### `mariadb`
+
+Tests a standard PrivateBin installation with the MariaDB database.
+
 ### `postgres`
 
 Tests a standard PrivateBin installation with the Postgres database.
