@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+# SPDX-FileCopyrightText: 2026 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Verify PrivateBin systemd service
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for PrivateBin service to become active (up to 180s)
+      ansible.builtin.systemd:
+        name: privatebin.service
+      register: privatebin_service
+      until: privatebin_service.status.ActiveState == 'active'
+      retries: 36
+      delay: 5
+
+    - name: Assert PrivateBin service is active
+      ansible.builtin.assert:
+        that: privatebin_service.status.ActiveState == 'active'
+        fail_msg: "privatebin.service not active ({{ privatebin_service.status.ActiveState }})"
+        success_msg: "privatebin.service is active"
+
+    - name: Retrieve PrivateBin service log for debugging
+      when: privatebin_debug_service_enabled | bool
+      ansible.builtin.command:
+        cmd: journalctl -xeu privatebin.service
+      changed_when: false
+
+    - name: Wait for PrivateBin HTTP endpoint to respond (up to 10m)
+      ansible.builtin.uri:
+        url: "http://localhost:8080/"
+        method: GET
+        status_code: [200, 302]
+        follow_redirects: none
+      register: privatebin_endpoint
+      until: privatebin_endpoint.status in [200, 302]
+      retries: 120
+      delay: 5
+
+    - name: Assert PrivateBin HTTP endpoint responds
+      ansible.builtin.assert:
+        that: privatebin_endpoint.status in [200, 302]
+        fail_msg: "PrivateBin did not respond as expected ({{ privatebin_endpoint.status | default('no response') }})"
+        success_msg: "PrivateBin responded with {{ privatebin_endpoint.status }}"
+
+    - name: Show PrivateBin systemd service status summary
+      ansible.builtin.debug:
+        msg:
+          - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
+          - "PrivateBin HTTP: {{ privatebin_endpoint.status }}"
