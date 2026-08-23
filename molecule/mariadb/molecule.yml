@@ -38,9 +38,9 @@ provisioner:
         privatebin_hostname: localhost
         privatebin_container_labels_traefik_enabled: false
         privatebin_container_http_host_bind_port: 8080
-        privatebin_database_type: mysql
 
         # Variables required for PrivateBin to connect to the MariaDB database (via Unix socket)
+        privatebin_database_type: mysql
         privatebin_database_mysql_username: my_database_username
         privatebin_database_mysql_password: my_database_password
         privatebin_database_name: privatebin
