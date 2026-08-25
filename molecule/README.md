@@ -53,6 +53,8 @@ Tests a standard PrivateBin installation.
 
 Tests a standard PrivateBin installation with self-building the container image.
 
+Runs in CI only for branches that change a version in `defaults/main.yml`, and on demand via `workflow_dispatch`. Self-building clones and builds from source, which is slow, and it exercises nothing new until one of those versions moves.
+
 ### `mariadb`
 
 Tests a standard PrivateBin installation with the MariaDB database.
@@ -60,6 +62,23 @@ Tests a standard PrivateBin installation with the MariaDB database.
 ### `postgres`
 
 Tests a standard PrivateBin installation with the Postgres database.
+
+## What the scenarios have to prove
+
+The container image PrivateBin publishes ships a complete, working configuration of its own. An unconfigured `privatebin/nginx-fpm-alpine` answers `/` with 200, renders the whole application, and accepts and returns pastes over its JSON API. On top of that, `Restart=always` in the systemd unit makes `systemctl is-active` report `active` for a container that is crash-looping.
+
+So "the unit is active" and "something answered on port 8080" say nothing about this role having done its job, and every scenario here is written to fail against that unconfigured image:
+
+- the served page must carry the instance name the scenario configured, and the `default-src 'self'; … sandbox …` Content-Security-Policy that only this role's `privatebin_config_main_cspheader` default produces — the image emits `default-src 'none'` and no `sandbox` directive
+- the version PrivateBin stamps onto the assets it serves must equal `privatebin_version`, so an image that does not actually run the pinned code is caught
+- a paste posted over the JSON API must come back byte-identical, which exercises PHP, the storage backend and the configuration together
+- a paste larger than `privatebin_config_main_sizelimit` must be refused — the image's own default is 10 MB and would accept it
+
+Beyond that, each scenario proves the one thing that distinguishes it:
+
+- `default` looks the paste up as a file below `privatebin_data_path`, which is what makes the `filesystem` model and its bind mount observable
+- `mariadb` and `postgres` look the paste's row up in the database itself, as the very user and database the role handed to PrivateBin, and require `privatebin_data_path` to be completely empty — which is what rules out a silent fallback to the filesystem backend
+- `default-selfbuild` reads back the image the container was created from and requires it to be the one the role built, with the upstream image absent from the host altogether
 
 ## Running
 
