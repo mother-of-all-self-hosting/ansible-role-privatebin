@@ -38,6 +38,17 @@ provisioner:
         privatebin_hostname: localhost
         privatebin_container_labels_traefik_enabled: false
         privatebin_container_http_host_bind_port: 8080
+
+        # An unconfigured PrivateBin image serves a fully working instance of
+        # its own, so the verification needs values that only a config.php
+        # rendered by this role could have produced. The image calls itself
+        # "PrivateBin" and defaults to a 10 MB paste size limit.
+        privatebin_config_main_name: MASH Molecule PrivateBin
+        privatebin_config_main_sizelimit: 4096
+
+        # The rate limiter would refuse the second paste that the verification
+        # posts before the size limit has a chance to reject it.
+        privatebin_config_trafic_limit: 0
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles

@@ -1,13 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
 # SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Verify PrivateBin systemd service
+# PrivateBin ships a complete, working configuration inside its container
+# image: an unconfigured `privatebin/nginx-fpm-alpine` answers `/` with 200,
+# renders the whole application and happily accepts and returns pastes over
+# its JSON API. "The unit is active" and "something answered on port 8080"
+# therefore say nothing at all about this role having done its job.
+#
+# Everything below is written so that it would fail against that unconfigured
+# image:
+#
+# - the instance name and the paste size limit come from this scenario's
+#   group_vars, so only a `config.php` rendered by this role can produce them
+# - the Content-Security-Policy meta tag carries a `sandbox` directive that
+#   only this role's `privatebin_config_main_cspheader` default emits
+# - the paste is looked up in the filesystem store under the role's own data
+#   path, which is a bind mount that the role sets up
+- name: Verify PrivateBin
   hosts: all
   become: true
   gather_facts: false
+
+  vars:
+    privatebin_verify_base_url: "http://localhost:8080"
+
+    # `privatebin_data_path` is a role default and thus not in scope here.
+    # Spelled out rather than read from the role, so that a change of that
+    # default which breaks the bind mount is noticed here.
+    privatebin_verify_data_path: /privatebin/data
+
+    # The shape of an encrypted PrivateBin paste. The server never decrypts
+    # any of this; it only validates the envelope, so fixed values are fine.
+    privatebin_verify_adata:
+      - - "aaaaaaaaaaaaaaaaaaaaaaaa"
+        - "bbbbbbbb"
+        - 100000
+        - 256
+        - 128
+        - "aes"
+        - "gcm"
+        - "none"
+      - plaintext
+      - 0
+      - 0
+
   tasks:
     - name: Wait for PrivateBin service to become active (up to 180s)
       ansible.builtin.systemd:
@@ -17,6 +57,9 @@
       retries: 36
       delay: 5
 
+    # `Restart=always` in the systemd unit means a crash-looping container
+    # still reports `active`, so this is a smoke test and nothing more. The
+    # assertions that follow are what actually decide whether the role works.
     - name: Assert PrivateBin service is active
       ansible.builtin.assert:
         that: privatebin_service.status.ActiveState == 'active'
@@ -29,25 +72,178 @@
         cmd: journalctl -xeu privatebin.service
       changed_when: false
 
-    - name: Wait for PrivateBin HTTP endpoint to respond (up to 10m)
+    # Read only for `privatebin_version`, the leaf literal that Renovate
+    # bumps. Loaded under a name of its own, because a plain `include_vars`
+    # outranks this scenario's group_vars and would silently undo them.
+    - name: Read the role's defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: privatebin_role_defaults
+
+    - name: Wait for the PrivateBin home page to render (up to 10m)
       ansible.builtin.uri:
-        url: "http://localhost:8080/"
+        url: "{{ privatebin_verify_base_url }}/"
         method: GET
-        status_code: [200, 302]
+        status_code: [200]
         follow_redirects: none
-      register: privatebin_endpoint
-      until: privatebin_endpoint.status in [200, 302]
+        return_content: true
+      register: privatebin_home_page
+      until: privatebin_home_page.status == 200
       retries: 120
       delay: 5
 
-    - name: Assert PrivateBin HTTP endpoint responds
+    # The image's own configuration names the instance "PrivateBin" and emits
+    # `default-src 'none'` with no `sandbox` directive at all.
+    - name: Assert the home page was rendered from the role's configuration
       ansible.builtin.assert:
-        that: privatebin_endpoint.status in [200, 302]
-        fail_msg: "PrivateBin did not respond as expected ({{ privatebin_endpoint.status | default('no response') }})"
-        success_msg: "PrivateBin responded with {{ privatebin_endpoint.status }}"
+        that:
+          - "'<title>' ~ privatebin_config_main_name ~ '</title>' in privatebin_home_page.content"
+          - "'default-src &apos;self&apos;' in privatebin_home_page.content"
+          - "'sandbox allow-same-origin allow-scripts' in privatebin_home_page.content"
+        fail_msg: >-
+          The served page does not carry the configuration this role rendered
+          (expected the instance name '{{ privatebin_config_main_name }}' and the role's CSP header)
+        success_msg: "The served page was rendered from the role's config.php"
 
-    - name: Show PrivateBin systemd service status summary
+    # PrivateBin stamps its own version onto the assets it serves, so this is
+    # the version of the PHP that is actually running, not merely the tag that
+    # was asked for. This is what makes a Renovate bump testable.
+    - name: Assert the running PrivateBin is the version the role pins
+      ansible.builtin.assert:
+        that: "'js/privatebin.js?' ~ privatebin_role_defaults.privatebin_version ~ '\"' in privatebin_home_page.content"
+        fail_msg: >-
+          The running PrivateBin does not report version
+          {{ privatebin_role_defaults.privatebin_version }}
+        success_msg: "The running PrivateBin reports version {{ privatebin_role_defaults.privatebin_version }}"
+
+    # A ciphertext of letters and digits only, so that it is valid base64 and
+    # PrivateBin accepts it. Generated once and reused, so that the value that
+    # goes in can be compared with the value that comes back out.
+    - name: Generate a ciphertext to paste
+      ansible.builtin.set_fact:
+        privatebin_verify_ct: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=1024) }}"
+
+    - name: Create a paste through the PrivateBin API
+      ansible.builtin.uri:
+        url: "{{ privatebin_verify_base_url }}/"
+        method: POST
+        headers:
+          X-Requested-With: JSONHttpRequest
+        body_format: json
+        body:
+          v: 2
+          adata: "{{ privatebin_verify_adata }}"
+          ct: "{{ privatebin_verify_ct }}"
+          meta:
+            expire: 5min
+        status_code: [200]
+        return_content: true
+      register: privatebin_paste_created
+      changed_when: true
+
+    - name: Assert the paste was accepted
+      ansible.builtin.assert:
+        that:
+          - privatebin_paste_created.json.status == 0
+          - privatebin_paste_created.json.id | default('') | length > 0
+          - privatebin_paste_created.json.deletetoken | default('') | length > 0
+        fail_msg: "PrivateBin refused the paste: {{ privatebin_paste_created.json | default('no payload') }}"
+        success_msg: "PrivateBin stored a paste as {{ privatebin_paste_created.json.id | default('?') }}"
+
+    - name: Read the paste back through the PrivateBin API
+      ansible.builtin.uri:
+        url: "{{ privatebin_verify_base_url }}/?pasteid={{ privatebin_paste_created.json.id }}"
+        method: GET
+        headers:
+          X-Requested-With: JSONHttpRequest
+        status_code: [200]
+        return_content: true
+      register: privatebin_paste_read
+
+    - name: Assert the paste came back unchanged
+      ansible.builtin.assert:
+        that:
+          - privatebin_paste_read.json.status == 0
+          - privatebin_paste_read.json.id == privatebin_paste_created.json.id
+          - privatebin_paste_read.json.ct == privatebin_verify_ct
+        fail_msg: "The paste did not come back as it went in: {{ privatebin_paste_read.json | default('no payload') }}"
+        success_msg: "The paste round-tripped through PrivateBin unchanged"
+
+    # This scenario leaves `privatebin_config_model` at its `filesystem`
+    # default, so the paste must exist as a file below the role's data path -
+    # which is a bind mount from the host into the container. Finding it here
+    # proves the storage backend in use and the bind mount at once.
+    - name: Stat the paste in the filesystem store
+      ansible.builtin.stat:
+        path: >-
+          {{
+            privatebin_verify_data_path
+            + '/' + privatebin_paste_created.json.id[0:2]
+            + '/' + privatebin_paste_created.json.id[2:4]
+            + '/' + privatebin_paste_created.json.id + '.php'
+          }}
+      register: privatebin_paste_file
+
+    - name: Assert the paste was written to the filesystem store
+      ansible.builtin.assert:
+        that: privatebin_paste_file.stat.exists
+        fail_msg: >-
+          The paste was not written below {{ privatebin_verify_data_path }},
+          so the filesystem storage backend is not the one in use
+        success_msg: "The paste was written to the filesystem store on the host"
+
+    - name: Read the paste's file from the filesystem store
+      ansible.builtin.slurp:
+        src: "{{ privatebin_paste_file.stat.path }}"
+      register: privatebin_paste_file_content
+
+    - name: Assert the file holds this paste's ciphertext
+      ansible.builtin.assert:
+        that: privatebin_verify_ct in (privatebin_paste_file_content.content | b64decode)
+        fail_msg: "{{ privatebin_paste_file.stat.path }} does not contain the ciphertext that was posted"
+        success_msg: "The file below {{ privatebin_verify_data_path }} holds this paste's ciphertext"
+
+    # The other direction of the same claim: this scenario sets a paste size
+    # limit far below the 10 MB the image defaults to, and PrivateBin must
+    # refuse a paste that exceeds it. A run against the image's own
+    # configuration accepts this paste.
+    - name: Attempt a paste larger than the configured size limit
+      ansible.builtin.uri:
+        url: "{{ privatebin_verify_base_url }}/"
+        method: POST
+        headers:
+          X-Requested-With: JSONHttpRequest
+        body_format: json
+        body:
+          v: 2
+          adata: "{{ privatebin_verify_adata }}"
+          ct: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=20000) }}"
+          meta:
+            expire: 5min
+        status_code: [200]
+        return_content: true
+      register: privatebin_paste_oversized
+      changed_when: false
+
+    - name: Assert the configured size limit is enforced
+      ansible.builtin.assert:
+        that:
+          - privatebin_paste_oversized.json.status == 1
+          - "'limited' in (privatebin_paste_oversized.json.message | default('') | lower)"
+        fail_msg: >-
+          A paste larger than privatebin_config_main_sizelimit
+          ({{ privatebin_config_main_sizelimit }}) was accepted:
+          {{ privatebin_paste_oversized.json | default('no payload') }}
+        success_msg: >-
+          PrivateBin enforced the configured size limit
+          ({{ privatebin_paste_oversized.json.message }})
+
+    - name: Show PrivateBin verification summary
       ansible.builtin.debug:
         msg:
           - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
-          - "PrivateBin HTTP: {{ privatebin_endpoint.status }}"
+          - "PrivateBin version: {{ privatebin_role_defaults.privatebin_version }}"
+          - "Instance name: {{ privatebin_config_main_name }}"
+          - "Paste: {{ privatebin_paste_created.json.id }}"
+          - "Filesystem store: {{ privatebin_paste_file.stat.path }}"
+          - "Size limit: {{ privatebin_paste_oversized.json.message }}"
