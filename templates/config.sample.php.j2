@@ -3,11 +3,16 @@
 ;
 ; See https://github.com/PrivateBin/PrivateBin/wiki/Configuration
 ; and https://github.com/PrivateBin/PrivateBin/blob/master/cfg/conf.sample.php
+;
+; Values that can hold arbitrary text (an instance name, a notice, a URL, a
+; database password) are quoted below. PHP's INI parser treats `?{}|&~!()^"`
+; as reserved outside of quotes and aborts the whole file over one of them,
+; which PrivateBin surfaces as an HTTP 500 on every single request.
 
 [main]
-name = {{ privatebin_config_main_name }}
+name = "{{ privatebin_config_main_name }}"
 
-basepath = {{ privatebin_config_main_basepath }}
+basepath = "{{ privatebin_config_main_basepath }}"
 
 discussion = {{ privatebin_config_main_discussion_enabled | to_json }}
 
@@ -41,14 +46,14 @@ template = {{ privatebin_config_main_template }}
 
 info = "{{ privatebin_config_main_info }}"
 
-notice = {{ privatebin_config_main_notice }}
+notice = "{{ privatebin_config_main_notice }}"
 
 languageselection = {{ privatebin_config_main_languageselection_enabled | to_json }}
 
 languagedefault = {{ privatebin_config_main_languagedefault }}
 
 {% if privatebin_config_main_urlshortener and privatebin_config_yourlsapi_enabled == '' %}
-urlshortener = {{ privatebin_config_main_urlshortener }}
+urlshortener = "{{ privatebin_config_main_urlshortener }}"
 {% elif privatebin_config_yourlsapi_enabled %}
 urlshortener = "${basepath}?shortenviayourls&link="
 {% endif %}
@@ -87,9 +92,9 @@ markdown = "Markdown"
 [traffic]
 limit = {{ privatebin_config_trafic_limit }}
 
-exempted = {{ privatebin_config_trafic_exempted }}
+exempted = "{{ privatebin_config_trafic_exempted }}"
 
-creators = {{ privatebin_config_trafic_creators }}
+creators = "{{ privatebin_config_trafic_creators }}"
 
 ; header = "X_FORWARDED_FOR"
 
@@ -108,8 +113,8 @@ dir = PATH "data"
 [model]
 class = GoogleCloudStorage
 [model_options]
-bucket = {{ privatebin_config_model_gcs_bucket }}
-prefix = {{ privatebin_config_model_gcs_prefix }}
+bucket = "{{ privatebin_config_model_gcs_bucket }}"
+prefix = "{{ privatebin_config_model_gcs_prefix }}"
 uniformacl = {{ privatebin_config_model_gcs_uniformacl | to_json }}
 
 {% elif privatebin_config_model == 'mysql' %}
@@ -118,8 +123,8 @@ class = Database
 [model_options]
 dsn = "{{ privatebin_config_model_database_mysql_dsn }}"
 tbl = "privatebin_"  ; table prefix
-usr = {{ privatebin_database_mysql_username }}
-pwd = {{ privatebin_database_mysql_password }}
+usr = "{{ privatebin_database_mysql_username }}"
+pwd = "{{ privatebin_database_mysql_password }}"
 opt[12] = true    ; PDO::ATTR_PERSISTENT
 
 {% elif privatebin_config_model == 'sqlite' %}
@@ -137,8 +142,8 @@ class = Database
 [model_options]
 dsn = "{{ privatebin_config_model_database_postgres_dsn }}"
 tbl = "privatebin_"     ; table prefix
-usr = {{ privatebin_database_postgres_username }}
-pwd = {{ privatebin_database_postgres_password }}
+usr = "{{ privatebin_database_postgres_username }}"
+pwd = "{{ privatebin_database_postgres_password }}"
 opt[12] = true    ; PDO::ATTR_PERSISTENT
 
 {% elif privatebin_config_model == 's3' %}
@@ -147,21 +152,21 @@ class = S3Storage
 [model_options]
 region = {{ privatebin_config_model_s3_region }}
 version = {{ privatebin_config_model_s3_version }}
-bucket = {{ privatebin_config_model_s3_bucket }}
-accesskey = {{ privatebin_config_model_s3_accesskey }}
-secretkey = {{ privatebin_config_model_s3_secretkey }}
+bucket = "{{ privatebin_config_model_s3_bucket }}"
+accesskey = "{{ privatebin_config_model_s3_accesskey }}"
+secretkey = "{{ privatebin_config_model_s3_secretkey }}"
 {% endif %}
 
 {% if privatebin_config_shrink_enabled %}
 [shlink]
-apiurl = {{ privatebin_config_shlink_apiurl }}
-apikey = {{ privatebin_config_shlink_apikey }}
+apiurl = "{{ privatebin_config_shlink_apiurl }}"
+apikey = "{{ privatebin_config_shlink_apikey }}"
 {% endif %}
 
 {% if privatebin_config_yourlsapi_enabled %}
 [yourls]
-signature = {{ privatebin_config_yourlsapi_signature }}
-apiurl = {{ privatebin_config_yourlsapi_url }}
+signature = "{{ privatebin_config_yourlsapi_signature }}"
+apiurl = "{{ privatebin_config_yourlsapi_url }}"
 {% endif %}
 
 {% if privatebin_config_sri %}
