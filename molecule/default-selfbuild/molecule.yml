@@ -39,6 +39,16 @@ provisioner:
         privatebin_container_labels_traefik_enabled: false
         privatebin_container_http_host_bind_port: 8080
 
+        # An unconfigured PrivateBin image serves a fully working instance of
+        # its own, so the verification needs values that only a config.php
+        # rendered by this role could have produced. The image calls itself
+        # "PrivateBin" and defaults to a 10 MB paste size limit.
+        privatebin_config_main_name: MASH Molecule PrivateBin (self-build)
+
+        # The rate limiter would refuse the second request the verification
+        # makes against the API.
+        privatebin_config_trafic_limit: 0
+
         # Test self-building
         privatebin_container_image_self_build: true
   env:

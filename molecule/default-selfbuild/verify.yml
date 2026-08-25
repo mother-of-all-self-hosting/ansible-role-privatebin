@@ -1,13 +1,49 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2026 spatterlight
 # SPDX-FileCopyrightText: 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Verify PrivateBin systemd service
+# What separates this scenario from `default` is where the image came from,
+# so that is what it has to prove. `privatebin_container_image_self_build`
+# only changes which image the systemd unit names; if the build silently did
+# not happen, or the unit kept pointing at docker.io, every probe below the
+# image check would still pass against the pulled image.
+#
+# The build is also the one place where this role's two version variables have
+# to agree with reality: `privatebin_container_image_self_build_repo_version`
+# is `<privatebin_version>-alpine<privatebin_version_alpine>`, and that git tag
+# has to exist in PrivateBin/docker-nginx-fpm-alpine. Upstream publishes no
+# unflavoured tags there at all, so a Renovate bump of `privatebin_version`
+# alone breaks self-building the moment upstream moves to a newer Alpine.
+# This scenario is what notices.
+- name: Verify self-built PrivateBin
   hosts: all
   become: true
   gather_facts: false
+
+  vars:
+    privatebin_verify_base_url: "http://localhost:8080"
+
+    # `privatebin_data_path` is a role default and thus not in scope here.
+    privatebin_verify_data_path: /privatebin/data
+
+    # The shape of an encrypted PrivateBin paste. The server never decrypts
+    # any of this; it only validates the envelope, so fixed values are fine.
+    privatebin_verify_adata:
+      - - "aaaaaaaaaaaaaaaaaaaaaaaa"
+        - "bbbbbbbb"
+        - 100000
+        - 256
+        - 128
+        - "aes"
+        - "gcm"
+        - "none"
+      - plaintext
+      - 0
+      - 0
+
   tasks:
     - name: Wait for PrivateBin service to become active (up to 180s)
       ansible.builtin.systemd:
@@ -17,6 +53,8 @@
       retries: 36
       delay: 5
 
+    # `Restart=always` in the systemd unit means a crash-looping container
+    # still reports `active`, so this is a smoke test and nothing more.
     - name: Assert PrivateBin service is active
       ansible.builtin.assert:
         that: privatebin_service.status.ActiveState == 'active'
@@ -29,25 +67,169 @@
         cmd: journalctl -xeu privatebin.service
       changed_when: false
 
-    - name: Wait for PrivateBin HTTP endpoint to respond (up to 10m)
+    # Read for `privatebin_version` and `privatebin_version_alpine`, both leaf
+    # literals. Loaded under a name of its own, because a plain `include_vars`
+    # outranks this scenario's group_vars and would silently undo them.
+    - name: Read the role's defaults
+      ansible.builtin.include_vars:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+        name: privatebin_role_defaults
+
+    - name: Determine the image the container was created from
+      ansible.builtin.command:
+        argv:
+          - docker
+          - inspect
+          - --format={{ '{{' }} .Config.Image {{ '}}' }}
+          - privatebin
+      register: privatebin_container_image_in_use
+      changed_when: false
+
+    # `privatebin/docker-nginx-fpm-alpine` is the name the role builds under;
+    # the pulled image is `privatebin/nginx-fpm-alpine` (no `docker-`) and
+    # carries a registry prefix. Neither can be mistaken for the other.
+    - name: Assert the container runs the locally built image
+      ansible.builtin.assert:
+        that:
+          - >-
+            (privatebin_container_image_in_use.stdout | trim)
+            == 'privatebin/docker-nginx-fpm-alpine:'
+               ~ privatebin_role_defaults.privatebin_version
+               ~ '-alpine' ~ privatebin_role_defaults.privatebin_version_alpine
+        fail_msg: >-
+          The container was created from '{{ privatebin_container_image_in_use.stdout | trim }}',
+          not from the image this role should have built
+        success_msg: "The container runs the self-built image {{ privatebin_container_image_in_use.stdout | trim }}"
+
+    - name: List the images present on the host
+      ansible.builtin.command:
+        argv:
+          - docker
+          - images
+          - --format={{ '{{' }} .Repository {{ '}}' }}
+      register: privatebin_images_present
+      changed_when: false
+
+    - name: Assert the upstream image was never pulled
+      ansible.builtin.assert:
+        that: "'privatebin/nginx-fpm-alpine' not in privatebin_images_present.stdout_lines"
+        fail_msg: >-
+          The upstream image was pulled even though self-building is enabled:
+          {{ privatebin_images_present.stdout_lines }}
+        success_msg: "Only the self-built image is present on the host"
+
+    - name: Wait for the PrivateBin home page to render (up to 10m)
       ansible.builtin.uri:
-        url: "http://localhost:8080/"
+        url: "{{ privatebin_verify_base_url }}/"
         method: GET
-        status_code: [200, 302]
+        status_code: [200]
         follow_redirects: none
-      register: privatebin_endpoint
-      until: privatebin_endpoint.status in [200, 302]
+        return_content: true
+      register: privatebin_home_page
+      until: privatebin_home_page.status == 200
       retries: 120
       delay: 5
 
-    - name: Assert PrivateBin HTTP endpoint responds
+    # The image's own configuration names the instance "PrivateBin" and emits
+    # `default-src 'none'` with no `sandbox` directive at all.
+    - name: Assert the home page was rendered from the role's configuration
       ansible.builtin.assert:
-        that: privatebin_endpoint.status in [200, 302]
-        fail_msg: "PrivateBin did not respond as expected ({{ privatebin_endpoint.status | default('no response') }})"
-        success_msg: "PrivateBin responded with {{ privatebin_endpoint.status }}"
+        that:
+          - "'<title>' ~ privatebin_config_main_name ~ '</title>' in privatebin_home_page.content"
+          - "'default-src &apos;self&apos;' in privatebin_home_page.content"
+          - "'sandbox allow-same-origin allow-scripts' in privatebin_home_page.content"
+        fail_msg: >-
+          The served page does not carry the configuration this role rendered
+          (expected the instance name '{{ privatebin_config_main_name }}' and the role's CSP header)
+        success_msg: "The served page was rendered from the role's config.php"
 
-    - name: Show PrivateBin systemd service status summary
+    # PrivateBin stamps its own version onto the assets it serves, so this
+    # reads the version of the PHP that came out of the build - the one thing
+    # a self-build can get wrong while still producing a working image.
+    - name: Assert the self-built PrivateBin is the version the role pins
+      ansible.builtin.assert:
+        that: "'js/privatebin.js?' ~ privatebin_role_defaults.privatebin_version ~ '\"' in privatebin_home_page.content"
+        fail_msg: >-
+          The self-built PrivateBin does not report version
+          {{ privatebin_role_defaults.privatebin_version }}
+        success_msg: "The self-built PrivateBin reports version {{ privatebin_role_defaults.privatebin_version }}"
+
+    # A ciphertext of letters and digits only, so that it is valid base64 and
+    # PrivateBin accepts it. Generated once and reused, so that the value that
+    # goes in can be compared with the value that comes back out.
+    - name: Generate a ciphertext to paste
+      ansible.builtin.set_fact:
+        privatebin_verify_ct: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=1024) }}"
+
+    - name: Create a paste through the PrivateBin API
+      ansible.builtin.uri:
+        url: "{{ privatebin_verify_base_url }}/"
+        method: POST
+        headers:
+          X-Requested-With: JSONHttpRequest
+        body_format: json
+        body:
+          v: 2
+          adata: "{{ privatebin_verify_adata }}"
+          ct: "{{ privatebin_verify_ct }}"
+          meta:
+            expire: 5min
+        status_code: [200]
+        return_content: true
+      register: privatebin_paste_created
+      changed_when: true
+
+    - name: Assert the paste was accepted
+      ansible.builtin.assert:
+        that:
+          - privatebin_paste_created.json.status == 0
+          - privatebin_paste_created.json.id | default('') | length > 0
+        fail_msg: "The self-built PrivateBin refused the paste: {{ privatebin_paste_created.json | default('no payload') }}"
+        success_msg: "The self-built PrivateBin stored a paste as {{ privatebin_paste_created.json.id | default('?') }}"
+
+    - name: Read the paste back through the PrivateBin API
+      ansible.builtin.uri:
+        url: "{{ privatebin_verify_base_url }}/?pasteid={{ privatebin_paste_created.json.id }}"
+        method: GET
+        headers:
+          X-Requested-With: JSONHttpRequest
+        status_code: [200]
+        return_content: true
+      register: privatebin_paste_read
+
+    - name: Assert the paste came back unchanged
+      ansible.builtin.assert:
+        that:
+          - privatebin_paste_read.json.status == 0
+          - privatebin_paste_read.json.ct == privatebin_verify_ct
+        fail_msg: "The paste did not come back as it went in: {{ privatebin_paste_read.json | default('no payload') }}"
+        success_msg: "The paste round-tripped through the self-built PrivateBin unchanged"
+
+    - name: Stat the paste in the filesystem store
+      ansible.builtin.stat:
+        path: >-
+          {{
+            privatebin_verify_data_path
+            + '/' + privatebin_paste_created.json.id[0:2]
+            + '/' + privatebin_paste_created.json.id[2:4]
+            + '/' + privatebin_paste_created.json.id + '.php'
+          }}
+      register: privatebin_paste_file
+
+    - name: Assert the paste was written to the filesystem store
+      ansible.builtin.assert:
+        that: privatebin_paste_file.stat.exists
+        fail_msg: >-
+          The paste was not written below {{ privatebin_verify_data_path }},
+          so the filesystem storage backend is not the one in use
+        success_msg: "The paste was written to the filesystem store on the host"
+
+    - name: Show PrivateBin verification summary
       ansible.builtin.debug:
         msg:
           - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
-          - "PrivateBin HTTP: {{ privatebin_endpoint.status }}"
+          - "Image in use: {{ privatebin_container_image_in_use.stdout | trim }}"
+          - "PrivateBin version: {{ privatebin_role_defaults.privatebin_version }}"
+          - "Instance name: {{ privatebin_config_main_name }}"
+          - "Paste: {{ privatebin_paste_created.json.id }}"
+          - "Filesystem store: {{ privatebin_paste_file.stat.path }}"
