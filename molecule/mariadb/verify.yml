@@ -262,7 +262,7 @@
           {{ privatebin_paste_oversized.json | default('no payload') }}
         success_msg: >-
           PrivateBin enforced the configured size limit
-          ({{ privatebin_paste_oversized.json.message }})
+          ({{ privatebin_paste_oversized.json.message | default('no message') }})
 
     - name: Show PrivateBin verification summary
       ansible.builtin.debug:
@@ -274,4 +274,4 @@
           - "Paste: {{ privatebin_paste_created.json.id }}"
           - "Rows in MariaDB: {{ privatebin_paste_db_row.stdout | trim }}"
           - "Files below {{ privatebin_verify_data_path }}: {{ privatebin_data_path_contents.matched }}"
-          - "Size limit: {{ privatebin_paste_oversized.json.message }}"
+          - "Size limit: {{ privatebin_paste_oversized.json.message | default('no message') }}"

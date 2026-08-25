@@ -236,7 +236,7 @@
           {{ privatebin_paste_oversized.json | default('no payload') }}
         success_msg: >-
           PrivateBin enforced the configured size limit
-          ({{ privatebin_paste_oversized.json.message }})
+          ({{ privatebin_paste_oversized.json.message | default('no message') }})
 
     - name: Show PrivateBin verification summary
       ansible.builtin.debug:
@@ -246,4 +246,4 @@
           - "Instance name: {{ privatebin_config_main_name }}"
           - "Paste: {{ privatebin_paste_created.json.id }}"
           - "Filesystem store: {{ privatebin_paste_file.stat.path }}"
-          - "Size limit: {{ privatebin_paste_oversized.json.message }}"
+          - "Size limit: {{ privatebin_paste_oversized.json.message | default('no message') }}"
