@@ -115,7 +115,7 @@ jobs:
             echo 'Manually dispatched - running the self-build scenario'
             exit 0
           fi
-          if git diff origin/main...HEAD -- defaults/main.yml | grep -qE '^[+-][^+-]*_version:'; then
+          if git diff origin/main...HEAD -- defaults/main.yml | grep -qE '^[+-][^+-]*_version[a-z_]*:'; then
             echo 'run=true' >> "$GITHUB_OUTPUT"
             echo 'A version changed relative to main - running the self-build scenario'
           else
