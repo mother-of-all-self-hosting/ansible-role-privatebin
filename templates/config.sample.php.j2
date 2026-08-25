@@ -52,14 +52,14 @@ languageselection = {{ privatebin_config_main_languageselection_enabled | to_jso
 
 languagedefault = {{ privatebin_config_main_languagedefault }}
 
-{% if privatebin_config_main_urlshortener and privatebin_config_yourlsapi_enabled == '' %}
+{% if privatebin_config_main_urlshortener and not privatebin_config_yourlsapi_enabled %}
 urlshortener = "{{ privatebin_config_main_urlshortener }}"
 {% elif privatebin_config_yourlsapi_enabled %}
 urlshortener = "${basepath}?shortenviayourls&link="
 {% endif %}
 
 {% if privatebin_config_main_urlshortener %}
-shortenbydefault = {{ privatebin_config_main_shortenbydefault }}
+shortenbydefault = {{ privatebin_config_main_shortenbydefault | to_json }}
 {% endif %}
 
 qrcode = {{ privatebin_config_main_qrcode_enabled | to_json }}
