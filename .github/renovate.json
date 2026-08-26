@@ -9,6 +9,6 @@
     "`privatebin_version_alpine` is deliberately not tracked by Renovate. It selects the git tag the self-build scenario clones (`<version>-alpine<alpine version>`), and PrivateBin/docker-nginx-fpm-alpine publishes nothing but flavoured tags there, so its correct value is 'whichever Alpine upstream tagged this release against' - not 'the newest Alpine'. Tracking Alpine's own releases would propose 3.25 before upstream had tagged anything against it and break self-building. The bump-gated `default-selfbuild` CI job is the safety net instead: it runs on any branch that changes a version in defaults/main.yml and fails if the resulting git tag does not exist upstream."
   ],
   "extends": [
-    "github>mother-of-all-self-hosting/renovate-config#v1.0.0"
+    "github>mother-of-all-self-hosting/renovate-config#v1.1.0"
   ]
 }
