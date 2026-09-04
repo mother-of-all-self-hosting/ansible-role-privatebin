@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 spatterlight
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# The size limit comes from this scenario's group_vars and is far below
+# the 10 MB the image defaults to, so its enforcement is a second, and
+# independent, proof that config.php reached the running process.
+- name: Attempt a paste larger than the configured size limit
+  ansible.builtin.uri:
+    url: "{{ privatebin_verify_base_url }}/"
+    method: POST
+    headers:
+      X-Requested-With: JSONHttpRequest
+    body_format: json
+    body:
+      v: 2
+      adata: "{{ privatebin_verify_adata }}"
+      ct: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=20000) }}"
+      meta:
+        expire: 5min
+    status_code: [200]
+    return_content: true
+  register: privatebin_paste_oversized
+  changed_when: false
+
+- name: Assert the configured size limit is enforced
+  ansible.builtin.assert:
+    that:
+      - privatebin_paste_oversized.json.status == 1
+      - "'limited' in (privatebin_paste_oversized.json.message | default('') | lower)"
+    fail_msg: >-
+      A paste larger than privatebin_config_main_sizelimit
+      ({{ privatebin_config_main_sizelimit }}) was accepted:
+      {{ privatebin_paste_oversized.json | default('no payload') }}
+    success_msg: >-
+      PrivateBin enforced the configured size limit
+      ({{ privatebin_paste_oversized.json.message | default('no message') }})

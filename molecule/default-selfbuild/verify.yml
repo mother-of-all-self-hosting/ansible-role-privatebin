@@ -141,6 +141,10 @@
           so the filesystem storage backend is not the one in use
         success_msg: "The paste was written to the filesystem store on the host"
 
+    - name: Run the checks shared by all PrivateBin scenarios (check size limit enforcement)
+      ansible.builtin.include_tasks:
+        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks_sizelimit.yml"
+
     - name: Show the PrivateBin verification summary
       ansible.builtin.debug:
         msg:
