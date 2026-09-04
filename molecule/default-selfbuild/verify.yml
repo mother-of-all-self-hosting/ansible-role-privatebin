@@ -143,16 +143,13 @@
           (expected the instance name '{{ privatebin_config_main_name }}' and the role's CSP header)
         success_msg: "The served page was rendered from the role's config.php"
 
-    # PrivateBin stamps its own version onto the assets it serves, so this
-    # reads the version of the PHP that came out of the build - the one thing
-    # a self-build can get wrong while still producing a working image.
-    - name: Assert the self-built PrivateBin is the version the role pins
+    # PrivateBin stamps its own version onto the assets it serves, so this is
+    # the version of the PHP that is actually running.
+    - name: Assert the running PrivateBin is the version this role installs
       ansible.builtin.assert:
         that: "'js/privatebin.js?' ~ privatebin_defaults.privatebin_version ~ '\"' in privatebin_home_page.content"
-        fail_msg: >-
-          The self-built PrivateBin does not report version
-          {{ privatebin_defaults.privatebin_version }}
-        success_msg: "The self-built PrivateBin reports {{ privatebin_defaults.privatebin_version }}"
+        fail_msg: "PrivateBin does not report {{ privatebin_defaults.privatebin_version }}"
+        success_msg: "PrivateBin reports {{ privatebin_defaults.privatebin_version }}"
 
     # A ciphertext of letters and digits only, so that it is valid base64 and
     # PrivateBin accepts it. Generated once and reused, so that the value that
@@ -161,6 +158,8 @@
       ansible.builtin.set_fact:
         privatebin_verify_ct: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=1024) }}"
 
+    # PrivateBin creates its tables the first time it talks to the database,
+    # so this single request also exercises the schema creation.
     - name: Create a paste through the PrivateBin API
       ansible.builtin.uri:
         url: "{{ privatebin_verify_base_url }}/"
@@ -184,8 +183,9 @@
         that:
           - privatebin_paste_created.json.status == 0
           - privatebin_paste_created.json.id | default('') | length > 0
-        fail_msg: "The self-built PrivateBin refused the paste: {{ privatebin_paste_created.json | default('no payload') }}"
-        success_msg: "The self-built PrivateBin stored a paste as {{ privatebin_paste_created.json.id | default('?') }}"
+          - privatebin_paste_created.json.deletetoken | default('') | length > 0
+        fail_msg: "PrivateBin refused the paste: {{ privatebin_paste_created.json | default('no payload') }}"
+        success_msg: "PrivateBin stored a paste as {{ privatebin_paste_created.json.id | default('?') }}"
 
     - name: Read the paste back through the PrivateBin API
       ansible.builtin.uri:
@@ -201,9 +201,10 @@
       ansible.builtin.assert:
         that:
           - privatebin_paste_read.json.status == 0
+          - privatebin_paste_read.json.id == privatebin_paste_created.json.id
           - privatebin_paste_read.json.ct == privatebin_verify_ct
         fail_msg: "The paste did not come back as it went in: {{ privatebin_paste_read.json | default('no payload') }}"
-        success_msg: "The paste round-tripped through the self-built PrivateBin unchanged"
+        success_msg: "The paste round-tripped through PrivateBin unchanged"
 
     - name: Stat the paste in the filesystem store
       ansible.builtin.stat:

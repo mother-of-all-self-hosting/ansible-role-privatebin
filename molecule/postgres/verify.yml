@@ -100,10 +100,7 @@
       delay: 5
 
     # The image's own configuration names the instance "PrivateBin" and emits
-    # `default-src 'none'` with no `sandbox` directive at all. The parentheses
-    # in this scenario's instance name are deliberate: PHP's INI parser
-    # reserves them outside of quotes, so this also covers the quoting of
-    # config.php.
+    # `default-src 'none'` with no `sandbox` directive at all.
     - name: Assert the home page was rendered from the role's configuration
       ansible.builtin.assert:
         that:
@@ -115,6 +112,8 @@
           (expected the instance name '{{ privatebin_config_main_name }}' and the role's CSP header)
         success_msg: "The served page was rendered from the role's config.php"
 
+    # PrivateBin stamps its own version onto the assets it serves, so this is
+    # the version of the PHP that is actually running.
     - name: Assert the running PrivateBin is the version this role installs
       ansible.builtin.assert:
         that: "'js/privatebin.js?' ~ privatebin_defaults.privatebin_version ~ '\"' in privatebin_home_page.content"
@@ -153,6 +152,7 @@
         that:
           - privatebin_paste_created.json.status == 0
           - privatebin_paste_created.json.id | default('') | length > 0
+          - privatebin_paste_created.json.deletetoken | default('') | length > 0
         fail_msg: "PrivateBin refused the paste: {{ privatebin_paste_created.json | default('no payload') }}"
         success_msg: "PrivateBin stored a paste as {{ privatebin_paste_created.json.id | default('?') }}"
 
@@ -170,6 +170,7 @@
       ansible.builtin.assert:
         that:
           - privatebin_paste_read.json.status == 0
+          - privatebin_paste_read.json.id == privatebin_paste_created.json.id
           - privatebin_paste_read.json.ct == privatebin_verify_ct
         fail_msg: "The paste did not come back as it went in: {{ privatebin_paste_read.json | default('no payload') }}"
         success_msg: "The paste round-tripped through PrivateBin unchanged"
