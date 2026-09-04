@@ -43,7 +43,7 @@ provisioner:
         # its own, so the verification needs values that only a config.php
         # rendered by this role could have produced. The image calls itself
         # "PrivateBin" and defaults to a 10 MB paste size limit.
-        privatebin_config_main_name: MASH Molecule PrivateBin (MariaDB)
+        privatebin_config_main_name: MASH Molecule PrivateBin
         privatebin_config_main_sizelimit: 4096
 
         # The rate limiter would refuse the second paste that the verification
