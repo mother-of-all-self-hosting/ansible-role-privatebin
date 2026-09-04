@@ -87,93 +87,9 @@
         file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
         name: privatebin_defaults
 
-    - name: Wait for the PrivateBin home page to render (up to 10m)
-      ansible.builtin.uri:
-        url: "{{ privatebin_verify_base_url }}/"
-        method: GET
-        status_code: [200]
-        follow_redirects: none
-        return_content: true
-      register: privatebin_home_page
-      until: privatebin_home_page.status == 200
-      retries: 120
-      delay: 5
-
-    # The image's own configuration names the instance "PrivateBin" and emits
-    # `default-src 'none'` with no `sandbox` directive at all.
-    - name: Assert the home page was rendered from the role's configuration
-      ansible.builtin.assert:
-        that:
-          - "'<title>' ~ privatebin_config_main_name ~ '</title>' in privatebin_home_page.content"
-          - "'default-src &apos;self&apos;' in privatebin_home_page.content"
-          - "'sandbox allow-same-origin allow-scripts' in privatebin_home_page.content"
-        fail_msg: >-
-          The served page does not carry the configuration this role rendered
-          (expected the instance name '{{ privatebin_config_main_name }}' and the role's CSP header)
-        success_msg: "The served page was rendered from the role's config.php"
-
-    # PrivateBin stamps its own version onto the assets it serves, so this is
-    # the version of the PHP that is actually running.
-    - name: Assert the running PrivateBin is the version this role installs
-      ansible.builtin.assert:
-        that: "'js/privatebin.js?' ~ privatebin_defaults.privatebin_version ~ '\"' in privatebin_home_page.content"
-        fail_msg: "PrivateBin does not report {{ privatebin_defaults.privatebin_version }}"
-        success_msg: "PrivateBin reports {{ privatebin_defaults.privatebin_version }}"
-
-    # A ciphertext of letters and digits only, so that it is valid base64 and
-    # PrivateBin accepts it. Generated once and reused, so that the value that
-    # goes in can be compared with the value that comes back out.
-    - name: Generate a ciphertext to paste
-      ansible.builtin.set_fact:
-        privatebin_verify_ct: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters', 'digits'], length=1024) }}"
-
-    # PrivateBin creates its tables the first time it talks to the database,
-    # so this single request also exercises the schema creation.
-    - name: Create a paste through the PrivateBin API
-      ansible.builtin.uri:
-        url: "{{ privatebin_verify_base_url }}/"
-        method: POST
-        headers:
-          X-Requested-With: JSONHttpRequest
-        body_format: json
-        body:
-          v: 2
-          adata: "{{ privatebin_verify_adata }}"
-          ct: "{{ privatebin_verify_ct }}"
-          meta:
-            expire: 5min
-        status_code: [200]
-        return_content: true
-      register: privatebin_paste_created
-      changed_when: true
-
-    - name: Assert the paste was accepted
-      ansible.builtin.assert:
-        that:
-          - privatebin_paste_created.json.status == 0
-          - privatebin_paste_created.json.id | default('') | length > 0
-          - privatebin_paste_created.json.deletetoken | default('') | length > 0
-        fail_msg: "PrivateBin refused the paste: {{ privatebin_paste_created.json | default('no payload') }}"
-        success_msg: "PrivateBin stored a paste as {{ privatebin_paste_created.json.id | default('?') }}"
-
-    - name: Read the paste back through the PrivateBin API
-      ansible.builtin.uri:
-        url: "{{ privatebin_verify_base_url }}/?pasteid={{ privatebin_paste_created.json.id }}"
-        method: GET
-        headers:
-          X-Requested-With: JSONHttpRequest
-        status_code: [200]
-        return_content: true
-      register: privatebin_paste_read
-
-    - name: Assert the paste came back unchanged
-      ansible.builtin.assert:
-        that:
-          - privatebin_paste_read.json.status == 0
-          - privatebin_paste_read.json.id == privatebin_paste_created.json.id
-          - privatebin_paste_read.json.ct == privatebin_verify_ct
-        fail_msg: "The paste did not come back as it went in: {{ privatebin_paste_read.json | default('no payload') }}"
-        success_msg: "The paste round-tripped through PrivateBin unchanged"
+    - name: Run the checks shared by all PrivateBin scenarios
+      ansible.builtin.include_tasks:
+        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
 
     # Asked of MariaDB directly, as the very user and database the role handed
     # to PrivateBin, so a wrong credential or a wrong DSN shows up here too.
