@@ -115,13 +115,11 @@
           (expected the instance name '{{ privatebin_config_main_name }}' and the role's CSP header)
         success_msg: "The served page was rendered from the role's config.php"
 
-    - name: Assert the running PrivateBin is the version the role pins
+    - name: Assert the running PrivateBin is the version this role installs
       ansible.builtin.assert:
         that: "'js/privatebin.js?' ~ privatebin_defaults.privatebin_version ~ '\"' in privatebin_home_page.content"
-        fail_msg: >-
-          The running PrivateBin does not report version
-          {{ privatebin_defaults.privatebin_version }}
-        success_msg: "The running PrivateBin reports {{ privatebin_defaults.privatebin_version }}"
+        fail_msg: "PrivateBin does not report {{ privatebin_defaults.privatebin_version }}"
+        success_msg: "PrivateBin reports {{ privatebin_defaults.privatebin_version }}"
 
     # A ciphertext of letters and digits only, so that it is valid base64 and
     # PrivateBin accepts it. Generated once and reused, so that the value that
