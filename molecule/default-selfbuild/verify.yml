@@ -224,12 +224,12 @@
           so the filesystem storage backend is not the one in use
         success_msg: "The paste was written to the filesystem store on the host"
 
-    - name: Show PrivateBin verification summary
+    - name: Show the PrivateBin verification summary
       ansible.builtin.debug:
         msg:
           - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
-          - "Image in use: {{ privatebin_container_image_in_use.stdout | trim }}"
-          - "PrivateBin version: {{ privatebin_role_defaults.privatebin_version }}"
-          - "Instance name: {{ privatebin_config_main_name }}"
-          - "Paste: {{ privatebin_paste_created.json.id }}"
-          - "Filesystem store: {{ privatebin_paste_file.stat.path }}"
+          - "PrivateBin version: {{ privatebin_defaults.privatebin_version }}"
+          - "PrivateBin image: {{ privatebin_container_image_in_use.stdout | trim }}"
+          - "PrivateBin instance name: {{ privatebin_config_main_name }}"
+          - "PrivateBin paste: {{ privatebin_paste_created.json.id }}"
+          - "PrivateBin filesystem store: {{ privatebin_paste_file.stat.path }}"

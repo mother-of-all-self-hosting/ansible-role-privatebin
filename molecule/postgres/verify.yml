@@ -264,14 +264,14 @@
           PrivateBin enforced the configured size limit
           ({{ privatebin_paste_oversized.json.message | default('no message') }})
 
-    - name: Show PrivateBin verification summary
+    - name: Show the PrivateBin verification summary
       ansible.builtin.debug:
         msg:
           - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
+          - "PrivateBin version: {{ privatebin_defaults.privatebin_version }}"
+          - "PrivateBin instance name: {{ privatebin_config_main_name }}"
+          - "PrivateBin paste: {{ privatebin_paste_created.json.id }}"
+          - "PrivateBin rows in Postgres: {{ privatebin_paste_db_row.stdout | trim }}"
+          - "PrivateBin files below {{ privatebin_verify_data_path }}: {{ privatebin_data_path_contents.matched }}"
+          - "PrivateBin size limit: {{ privatebin_paste_oversized.json.message | default('no message') }}"
           - "Postgres systemd: {{ privatebin_postgres_service.status.ActiveState }}"
-          - "PrivateBin version: {{ privatebin_role_defaults.privatebin_version }}"
-          - "Instance name: {{ privatebin_config_main_name }}"
-          - "Paste: {{ privatebin_paste_created.json.id }}"
-          - "Rows in Postgres: {{ privatebin_paste_db_row.stdout | trim }}"
-          - "Files below {{ privatebin_verify_data_path }}: {{ privatebin_data_path_contents.matched }}"
-          - "Size limit: {{ privatebin_paste_oversized.json.message | default('no message') }}"
