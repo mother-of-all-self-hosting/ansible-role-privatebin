@@ -48,7 +48,7 @@ provisioner:
 
         # The rate limiter would refuse the second paste that the verification
         # posts before the size limit has a chance to reject it.
-        privatebin_config_trafic_limit: 0
+        privatebin_config_traffic_limit: 0
 
         # Variables required for PrivateBin to connect to the Postgres database (via Unix socket)
         #

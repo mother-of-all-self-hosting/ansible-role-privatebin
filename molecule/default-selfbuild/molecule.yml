@@ -44,10 +44,11 @@ provisioner:
         # rendered by this role could have produced. The image calls itself
         # "PrivateBin" and defaults to a 10 MB paste size limit.
         privatebin_config_main_name: MASH Molecule PrivateBin
+        privatebin_config_main_sizelimit: 4096
 
         # The rate limiter would refuse the second request the verification
         # makes against the API.
-        privatebin_config_trafic_limit: 0
+        privatebin_config_traffic_limit: 0
 
         # Test self-building
         privatebin_container_image_self_build: true

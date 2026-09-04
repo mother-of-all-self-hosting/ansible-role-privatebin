@@ -48,7 +48,7 @@ provisioner:
 
         # The rate limiter would refuse the second paste that the verification
         # posts before the size limit has a chance to reject it.
-        privatebin_config_trafic_limit: 0
+        privatebin_config_traffic_limit: 0
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
     ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/..:/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles:~/.ansible/roles

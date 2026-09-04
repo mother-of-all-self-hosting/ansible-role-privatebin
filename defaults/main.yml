@@ -391,15 +391,15 @@ privatebin_config_yourlsapi_url: ""
 
 # Specify the number of seconds for rate-limiting per IP address
 # Set 0 to disable rate-limiting
-privatebin_config_trafic_limit: 10
+privatebin_config_traffic_limit: 10
 
 # Specify IP addresses (v4 or v6) or subnets (CIDR) to exempt from the rate-limit.
 # If multiple values are to be exempted, the list needs to be separated with commas.
-privatebin_config_trafic_exempted: ""
+privatebin_config_traffic_exempted: ""
 
 # Specify IP addresses (v4 or v6) or subnets (CIDR) to allow to create pastes.
 # If multiple values are to be exempted, the list needs to be separated with commas.
-privatebin_config_trafic_creators: ""
+privatebin_config_traffic_creators: ""
 
 # Control the "model" configuration
 # See: https://github.com/PrivateBin/PrivateBin/wiki/Configuration#model
