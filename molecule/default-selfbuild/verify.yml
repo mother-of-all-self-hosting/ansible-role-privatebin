@@ -67,13 +67,13 @@
         cmd: journalctl -xeu privatebin.service
       changed_when: false
 
-    # Read for `privatebin_version` and `privatebin_version_alpine`, both leaf
-    # literals. Loaded under a name of its own, because a plain `include_vars`
-    # outranks this scenario's group_vars and would silently undo them.
-    - name: Read the role's defaults
+    # The role is not included in this playbook, so its defaults are not in
+    # scope. Reading defaults/main.yml directly ties the version assertion
+    # below.
+    - name: Load the role defaults
       ansible.builtin.include_vars:
         file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
-        name: privatebin_role_defaults
+        name: privatebin_defaults
 
     - name: Determine the image the container was created from
       ansible.builtin.command:
@@ -94,8 +94,8 @@
           - >-
             (privatebin_container_image_in_use.stdout | trim)
             == 'privatebin/docker-nginx-fpm-alpine:'
-               ~ privatebin_role_defaults.privatebin_version
-               ~ '-alpine' ~ privatebin_role_defaults.privatebin_version_alpine
+               ~ privatebin_defaults.privatebin_version
+               ~ '-alpine' ~ privatebin_defaults.privatebin_version_alpine
         fail_msg: >-
           The container was created from '{{ privatebin_container_image_in_use.stdout | trim }}',
           not from the image this role should have built
@@ -148,11 +148,11 @@
     # a self-build can get wrong while still producing a working image.
     - name: Assert the self-built PrivateBin is the version the role pins
       ansible.builtin.assert:
-        that: "'js/privatebin.js?' ~ privatebin_role_defaults.privatebin_version ~ '\"' in privatebin_home_page.content"
+        that: "'js/privatebin.js?' ~ privatebin_defaults.privatebin_version ~ '\"' in privatebin_home_page.content"
         fail_msg: >-
           The self-built PrivateBin does not report version
-          {{ privatebin_role_defaults.privatebin_version }}
-        success_msg: "The self-built PrivateBin reports version {{ privatebin_role_defaults.privatebin_version }}"
+          {{ privatebin_defaults.privatebin_version }}
+        success_msg: "The self-built PrivateBin reports {{ privatebin_defaults.privatebin_version }}"
 
     # A ciphertext of letters and digits only, so that it is valid base64 and
     # PrivateBin accepts it. Generated once and reused, so that the value that
