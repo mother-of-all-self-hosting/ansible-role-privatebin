@@ -45,16 +45,16 @@
       - 0
 
   tasks:
-    - name: Wait for MariaDB service to become active (up to 180s)
-      ansible.builtin.systemd:
+    - name: Wait for the MariaDB systemd service to become active (up to 180s)
+      ansible.builtin.systemd_service:
         name: mariadb.service
       register: privatebin_mariadb_service
       until: privatebin_mariadb_service.status.ActiveState == 'active'
       retries: 36
       delay: 5
 
-    - name: Wait for PrivateBin service to become active (up to 180s)
-      ansible.builtin.systemd:
+    - name: Wait for the PrivateBin systemd service to become active (up to 180s)
+      ansible.builtin.systemd_service:
         name: privatebin.service
       register: privatebin_service
       until: privatebin_service.status.ActiveState == 'active'
@@ -73,7 +73,7 @@
           privatebin.service is {{ privatebin_service.status.ActiveState }}
         success_msg: "mariadb.service and privatebin.service are active"
 
-    - name: Retrieve PrivateBin service log for debugging
+    - name: Retrieve the PrivateBin systemd service log for debugging
       when: privatebin_debug_service_enabled | bool
       ansible.builtin.command:
         cmd: journalctl -xeu privatebin.service

@@ -49,24 +49,27 @@
       - 0
 
   tasks:
-    - name: Wait for PrivateBin service to become active (up to 180s)
-      ansible.builtin.systemd:
+    - name: Wait for the PrivateBin systemd service to become active (up to 180s)
+      ansible.builtin.systemd_service:
         name: privatebin.service
       register: privatebin_service
       until: privatebin_service.status.ActiveState == 'active'
       retries: 36
       delay: 5
+      # So that giving up is reported by the assertion below rather than as a
+      # wall of systemd unit properties.
+      failed_when: false
 
-    # `Restart=always` in the systemd unit means a crash-looping container
-    # still reports `active`, so this is a smoke test and nothing more. The
-    # assertions that follow are what actually decide whether the role works.
-    - name: Assert PrivateBin service is active
+    # `Restart=always` in the systemd unit means that even a container which crashes
+    # and gets restarted reads as active here, so this is a precondition rather than
+    # a result.
+    - name: Assert the PrivateBin systemd service is active
       ansible.builtin.assert:
         that: privatebin_service.status.ActiveState == 'active'
-        fail_msg: "privatebin.service not active ({{ privatebin_service.status.ActiveState }})"
+        fail_msg: "privatebin.service is not active ({{ privatebin_service.status.ActiveState }})"
         success_msg: "privatebin.service is active"
 
-    - name: Retrieve PrivateBin service log for debugging
+    - name: Retrieve the PrivateBin systemd service log for debugging
       when: privatebin_debug_service_enabled | bool
       ansible.builtin.command:
         cmd: journalctl -xeu privatebin.service
