@@ -68,7 +68,7 @@
     - name: Retrieve the PrivateBin systemd service log for debugging
       when: privatebin_debug_service_enabled | bool
       ansible.builtin.command:
-        cmd: journalctl -xeu privatebin.service
+        cmd: journalctl --no-pager --output=cat --unit=privatebin.service
       changed_when: false
 
     # The role is not included in this playbook, so its defaults are not in
