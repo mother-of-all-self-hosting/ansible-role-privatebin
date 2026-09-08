@@ -52,6 +52,9 @@
       until: privatebin_mariadb_service.status.ActiveState == 'active'
       retries: 36
       delay: 5
+      # So that giving up is reported by the assertion below rather than as a
+      # wall of systemd unit properties.
+      failed_when: false
 
     - name: Wait for the PrivateBin systemd service to become active (up to 180s)
       ansible.builtin.systemd_service:
@@ -60,9 +63,13 @@
       until: privatebin_service.status.ActiveState == 'active'
       retries: 36
       delay: 5
+      # So that giving up is reported by the assertion below rather than as a
+      # wall of systemd unit properties.
+      failed_when: false
 
-    # `Restart=always` in the systemd unit means a crash-looping container
-    # still reports `active`, so this is a smoke test and nothing more.
+    # `Restart=always` in the systemd unit means that even a container which crashes
+    # and gets restarted reads as active here, so this is a precondition rather than
+    # a result.
     - name: Assert both services are active
       ansible.builtin.assert:
         that:
