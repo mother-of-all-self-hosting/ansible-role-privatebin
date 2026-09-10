@@ -47,128 +47,128 @@
   tasks:
     - name: Verify that PrivateBin works
       block:
-    - name: Wait for the Postgres systemd service to become active (up to 180s)
-      ansible.builtin.systemd_service:
-        name: postgres.service
-      register: privatebin_postgres_service
-      until: privatebin_postgres_service.status.ActiveState == 'active'
-      retries: 36
-      delay: 5
-      # So that giving up is reported by the assertion below rather than as a
-      # wall of systemd unit properties.
-      failed_when: false
+        - name: Wait for the Postgres systemd service to become active (up to 180s)
+          ansible.builtin.systemd_service:
+            name: postgres.service
+          register: privatebin_postgres_service
+          until: privatebin_postgres_service.status.ActiveState == 'active'
+          retries: 36
+          delay: 5
+          # So that giving up is reported by the assertion below rather than as a
+          # wall of systemd unit properties.
+          failed_when: false
 
-    - name: Wait for the PrivateBin systemd service to become active (up to 180s)
-      ansible.builtin.systemd_service:
-        name: privatebin.service
-      register: privatebin_service
-      until: privatebin_service.status.ActiveState == 'active'
-      retries: 36
-      delay: 5
-      # So that giving up is reported by the assertion below rather than as a
-      # wall of systemd unit properties.
-      failed_when: false
+        - name: Wait for the PrivateBin systemd service to become active (up to 180s)
+          ansible.builtin.systemd_service:
+            name: privatebin.service
+          register: privatebin_service
+          until: privatebin_service.status.ActiveState == 'active'
+          retries: 36
+          delay: 5
+          # So that giving up is reported by the assertion below rather than as a
+          # wall of systemd unit properties.
+          failed_when: false
 
-    # `Restart=always` in the systemd unit means that even a container which crashes
-    # and gets restarted reads as active here, so this is a precondition rather than
-    # a result.
-    - name: Assert both services are active
-      ansible.builtin.assert:
-        that:
-          - privatebin_postgres_service.status.ActiveState == 'active'
-          - privatebin_service.status.ActiveState == 'active'
-        fail_msg: >-
-          postgres.service is {{ privatebin_postgres_service.status.ActiveState }},
-          privatebin.service is {{ privatebin_service.status.ActiveState }}
-        success_msg: "postgres.service and privatebin.service are active"
+        # `Restart=always` in the systemd unit means that even a container which crashes
+        # and gets restarted reads as active here, so this is a precondition rather than
+        # a result.
+        - name: Assert both services are active
+          ansible.builtin.assert:
+            that:
+              - privatebin_postgres_service.status.ActiveState == 'active'
+              - privatebin_service.status.ActiveState == 'active'
+            fail_msg: >-
+              postgres.service is {{ privatebin_postgres_service.status.ActiveState }},
+              privatebin.service is {{ privatebin_service.status.ActiveState }}
+            success_msg: "postgres.service and privatebin.service are active"
 
-    - name: Retrieve the PrivateBin systemd service log for debugging
-      when: privatebin_debug_service_enabled | bool
-      ansible.builtin.command:
-        cmd: journalctl --no-pager --output=cat --unit=privatebin.service
-      changed_when: false
+        - name: Retrieve the PrivateBin systemd service log for debugging
+          when: privatebin_debug_service_enabled | bool
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=privatebin.service
+          changed_when: false
 
-    # The role is not included in this playbook, so its defaults are not in
-    # scope. Reading defaults/main.yml directly ties the version assertion
-    # below.
-    - name: Load the role defaults
-      ansible.builtin.include_vars:
-        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
-        name: privatebin_defaults
+        # The role is not included in this playbook, so its defaults are not in
+        # scope. Reading defaults/main.yml directly ties the version assertion
+        # below.
+        - name: Load the role defaults
+          ansible.builtin.include_vars:
+            file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+            name: privatebin_defaults
 
-    - name: Run the checks shared by all PrivateBin scenarios
-      ansible.builtin.include_tasks:
-        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
+        - name: Run the checks shared by all PrivateBin scenarios
+          ansible.builtin.include_tasks:
+            file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
 
-    # Asked of Postgres directly, as the very user and database the role handed
-    # to PrivateBin, so a wrong credential or a wrong DSN shows up here too.
-    # `community.docker` is unavailable in the linting environment this suite
-    # runs under, hence the Docker CLI.
-    - name: Look the paste up in Postgres
-      ansible.builtin.command:
-        argv:
-          - docker
-          - exec
-          - "--env=PGPASSWORD={{ privatebin_database_postgres_password }}"
-          - postgres
-          - psql
-          - "--username={{ privatebin_database_postgres_username }}"
-          - "--dbname={{ privatebin_database_name }}"
-          - --no-align
-          - --tuples-only
-          - "--command=SELECT COUNT(*) FROM {{ privatebin_verify_paste_table }} WHERE dataid = '{{ privatebin_paste_created.json.id }}'"
-      register: privatebin_paste_db_row
-      changed_when: false
-      failed_when: false
+        # Asked of Postgres directly, as the very user and database the role handed
+        # to PrivateBin, so a wrong credential or a wrong DSN shows up here too.
+        # `community.docker` is unavailable in the linting environment this suite
+        # runs under, hence the Docker CLI.
+        - name: Look the paste up in Postgres
+          ansible.builtin.command:
+            argv:
+              - docker
+              - exec
+              - "--env=PGPASSWORD={{ privatebin_database_postgres_password }}"
+              - postgres
+              - psql
+              - "--username={{ privatebin_database_postgres_username }}"
+              - "--dbname={{ privatebin_database_name }}"
+              - --no-align
+              - --tuples-only
+              - "--command=SELECT COUNT(*) FROM {{ privatebin_verify_paste_table }} WHERE dataid = '{{ privatebin_paste_created.json.id }}'"
+          register: privatebin_paste_db_row
+          changed_when: false
+          failed_when: false
 
-    - name: Assert the paste is stored in Postgres
-      ansible.builtin.assert:
-        that:
-          - privatebin_paste_db_row.rc == 0
-          - (privatebin_paste_db_row.stdout | trim) == '1'
-        fail_msg: >-
-          {{ privatebin_verify_paste_table }} in the '{{ privatebin_database_name }}' database does not hold
-          {{ privatebin_paste_created.json.id }}, so PrivateBin is not using Postgres
-          (rc={{ privatebin_paste_db_row.rc }}, stdout={{ privatebin_paste_db_row.stdout | default('') | trim }},
-          stderr={{ privatebin_paste_db_row.stderr | default('') | trim }})
-        success_msg: "Postgres holds the paste as row {{ privatebin_paste_created.json.id }}"
+        - name: Assert the paste is stored in Postgres
+          ansible.builtin.assert:
+            that:
+              - privatebin_paste_db_row.rc == 0
+              - (privatebin_paste_db_row.stdout | trim) == '1'
+            fail_msg: >-
+              {{ privatebin_verify_paste_table }} in the '{{ privatebin_database_name }}' database does not hold
+              {{ privatebin_paste_created.json.id }}, so PrivateBin is not using Postgres
+              (rc={{ privatebin_paste_db_row.rc }}, stdout={{ privatebin_paste_db_row.stdout | default('') | trim }},
+              stderr={{ privatebin_paste_db_row.stderr | default('') | trim }})
+            success_msg: "Postgres holds the paste as row {{ privatebin_paste_created.json.id }}"
 
-    # And the counterpart: with the database backend in use, PrivateBin keeps
-    # nothing at all below the role's data path - not even its salt. A run
-    # that had silently fallen back to the filesystem backend would have the
-    # paste sitting right here.
-    - name: List what the filesystem store holds
-      ansible.builtin.find:
-        paths: "{{ privatebin_verify_data_path }}"
-        recurse: true
-        hidden: true
-        file_type: file
-      register: privatebin_data_path_contents
+        # And the counterpart: with the database backend in use, PrivateBin keeps
+        # nothing at all below the role's data path - not even its salt. A run
+        # that had silently fallen back to the filesystem backend would have the
+        # paste sitting right here.
+        - name: List what the filesystem store holds
+          ansible.builtin.find:
+            paths: "{{ privatebin_verify_data_path }}"
+            recurse: true
+            hidden: true
+            file_type: file
+          register: privatebin_data_path_contents
 
-    - name: Assert nothing was written to the filesystem store
-      ansible.builtin.assert:
-        that: privatebin_data_path_contents.matched == 0
-        fail_msg: >-
-          {{ privatebin_verify_data_path }} is not empty
-          ({{ privatebin_data_path_contents.files | map(attribute='path') | list }}),
-          so PrivateBin fell back to the filesystem storage backend
-        success_msg: "The filesystem store is empty - Postgres is the storage backend in use"
+        - name: Assert nothing was written to the filesystem store
+          ansible.builtin.assert:
+            that: privatebin_data_path_contents.matched == 0
+            fail_msg: >-
+              {{ privatebin_verify_data_path }} is not empty
+              ({{ privatebin_data_path_contents.files | map(attribute='path') | list }}),
+              so PrivateBin fell back to the filesystem storage backend
+            success_msg: "The filesystem store is empty - Postgres is the storage backend in use"
 
-    - name: Run the checks shared by all PrivateBin scenarios (check size limit enforcement)
-      ansible.builtin.include_tasks:
-        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks_sizelimit.yml"
+        - name: Run the checks shared by all PrivateBin scenarios (check size limit enforcement)
+          ansible.builtin.include_tasks:
+            file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks_sizelimit.yml"
 
-    - name: Show the PrivateBin verification summary
-      ansible.builtin.debug:
-        msg:
-          - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
-          - "PrivateBin version: {{ privatebin_defaults.privatebin_version }}"
-          - "PrivateBin instance name: {{ privatebin_config_main_name }}"
-          - "PrivateBin paste: {{ privatebin_paste_created.json.id }}"
-          - "PrivateBin rows in Postgres: {{ privatebin_paste_db_row.stdout | trim }}"
-          - "PrivateBin files below {{ privatebin_verify_data_path }}: {{ privatebin_data_path_contents.matched }}"
-          - "PrivateBin size limit: {{ privatebin_paste_oversized.json.message | default('no message') }}"
-          - "Postgres systemd: {{ privatebin_postgres_service.status.ActiveState }}"
+        - name: Show the PrivateBin verification summary
+          ansible.builtin.debug:
+            msg:
+              - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
+              - "PrivateBin version: {{ privatebin_defaults.privatebin_version }}"
+              - "PrivateBin instance name: {{ privatebin_config_main_name }}"
+              - "PrivateBin paste: {{ privatebin_paste_created.json.id }}"
+              - "PrivateBin rows in Postgres: {{ privatebin_paste_db_row.stdout | trim }}"
+              - "PrivateBin files below {{ privatebin_verify_data_path }}: {{ privatebin_data_path_contents.matched }}"
+              - "PrivateBin size limit: {{ privatebin_paste_oversized.json.message | default('no message') }}"
+              - "Postgres systemd: {{ privatebin_postgres_service.status.ActiveState }}"
 
       rescue:
         # Whatever went wrong, the reason is almost always in the systemd service log.

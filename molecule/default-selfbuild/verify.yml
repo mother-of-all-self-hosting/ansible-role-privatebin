@@ -47,127 +47,127 @@
   tasks:
     - name: Verify that PrivateBin works
       block:
-    - name: Wait for the PrivateBin systemd service to become active (up to 180s)
-      ansible.builtin.systemd_service:
-        name: privatebin.service
-      register: privatebin_service
-      until: privatebin_service.status.ActiveState == 'active'
-      retries: 36
-      delay: 5
-      # So that giving up is reported by the assertion below rather than as a
-      # wall of systemd unit properties.
-      failed_when: false
+        - name: Wait for the PrivateBin systemd service to become active (up to 180s)
+          ansible.builtin.systemd_service:
+            name: privatebin.service
+          register: privatebin_service
+          until: privatebin_service.status.ActiveState == 'active'
+          retries: 36
+          delay: 5
+          # So that giving up is reported by the assertion below rather than as a
+          # wall of systemd unit properties.
+          failed_when: false
 
-    # `Restart=always` in the systemd unit means that even a container which crashes
-    # and gets restarted reads as active here, so this is a precondition rather than
-    # a result.
-    - name: Assert the PrivateBin systemd service is active
-      ansible.builtin.assert:
-        that: privatebin_service.status.ActiveState == 'active'
-        fail_msg: "privatebin.service is not active ({{ privatebin_service.status.ActiveState }})"
-        success_msg: "privatebin.service is active"
+        # `Restart=always` in the systemd unit means that even a container which crashes
+        # and gets restarted reads as active here, so this is a precondition rather than
+        # a result.
+        - name: Assert the PrivateBin systemd service is active
+          ansible.builtin.assert:
+            that: privatebin_service.status.ActiveState == 'active'
+            fail_msg: "privatebin.service is not active ({{ privatebin_service.status.ActiveState }})"
+            success_msg: "privatebin.service is active"
 
-    - name: Retrieve the PrivateBin systemd service log for debugging
-      when: privatebin_debug_service_enabled | bool
-      ansible.builtin.command:
-        cmd: journalctl --no-pager --output=cat --unit=privatebin.service
-      changed_when: false
+        - name: Retrieve the PrivateBin systemd service log for debugging
+          when: privatebin_debug_service_enabled | bool
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=privatebin.service
+          changed_when: false
 
-    # The role is not included in this playbook, so its defaults are not in
-    # scope. Reading defaults/main.yml directly ties the version assertion
-    # below.
-    - name: Load the role defaults
-      ansible.builtin.include_vars:
-        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
-        name: privatebin_defaults
+        # The role is not included in this playbook, so its defaults are not in
+        # scope. Reading defaults/main.yml directly ties the version assertion
+        # below.
+        - name: Load the role defaults
+          ansible.builtin.include_vars:
+            file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
+            name: privatebin_defaults
 
-    - name: Determine the image the container was created from
-      ansible.builtin.command:
-        cmd: "docker inspect --format={{ '{{' }} .Config.Image {{ '}}' }} privatebin"
-      register: privatebin_container_image_in_use
-      changed_when: false
+        - name: Determine the image the container was created from
+          ansible.builtin.command:
+            cmd: "docker inspect --format={{ '{{' }} .Config.Image {{ '}}' }} privatebin"
+          register: privatebin_container_image_in_use
+          changed_when: false
 
-    # `privatebin/docker-nginx-fpm-alpine` is the name the role builds under;
-    # the pulled image is `privatebin/nginx-fpm-alpine` (no `docker-`) and
-    # carries a registry prefix. Neither can be mistaken for the other.
-    - name: Assert the container runs the locally built image
-      ansible.builtin.assert:
-        that:
-          - >-
-            (privatebin_container_image_in_use.stdout | trim)
-            == 'privatebin/docker-nginx-fpm-alpine:'
-               ~ privatebin_defaults.privatebin_version
-               ~ '-alpine' ~ privatebin_defaults.privatebin_version_alpine
-        fail_msg: >-
-          The container was created from '{{ privatebin_container_image_in_use.stdout | trim }}',
-          not from the image this role should have built
-        success_msg: "The container runs the self-built image {{ privatebin_container_image_in_use.stdout | trim }}"
+        # `privatebin/docker-nginx-fpm-alpine` is the name the role builds under;
+        # the pulled image is `privatebin/nginx-fpm-alpine` (no `docker-`) and
+        # carries a registry prefix. Neither can be mistaken for the other.
+        - name: Assert the container runs the locally built image
+          ansible.builtin.assert:
+            that:
+              - >-
+                (privatebin_container_image_in_use.stdout | trim)
+                == 'privatebin/docker-nginx-fpm-alpine:'
+                   ~ privatebin_defaults.privatebin_version
+                   ~ '-alpine' ~ privatebin_defaults.privatebin_version_alpine
+            fail_msg: >-
+              The container was created from '{{ privatebin_container_image_in_use.stdout | trim }}',
+              not from the image this role should have built
+            success_msg: "The container runs the self-built image {{ privatebin_container_image_in_use.stdout | trim }}"
 
-    - name: List the images present on the host
-      ansible.builtin.command:
-        cmd: "docker images --format={{ '{{' }} .Repository {{ '}}' }}"
-      register: privatebin_images_present
-      changed_when: false
+        - name: List the images present on the host
+          ansible.builtin.command:
+            cmd: "docker images --format={{ '{{' }} .Repository {{ '}}' }}"
+          register: privatebin_images_present
+          changed_when: false
 
-    - name: Assert the upstream image was never pulled
-      ansible.builtin.assert:
-        that: "'privatebin/nginx-fpm-alpine' not in privatebin_images_present.stdout_lines"
-        fail_msg: >-
-          The upstream image was pulled even though self-building is enabled:
-          {{ privatebin_images_present.stdout_lines }}
-        success_msg: "Only the self-built image is present on the host"
+        - name: Assert the upstream image was never pulled
+          ansible.builtin.assert:
+            that: "'privatebin/nginx-fpm-alpine' not in privatebin_images_present.stdout_lines"
+            fail_msg: >-
+              The upstream image was pulled even though self-building is enabled:
+              {{ privatebin_images_present.stdout_lines }}
+            success_msg: "Only the self-built image is present on the host"
 
-    - name: Run the checks shared by all PrivateBin scenarios
-      ansible.builtin.include_tasks:
-        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
+        - name: Run the checks shared by all PrivateBin scenarios
+          ansible.builtin.include_tasks:
+            file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks.yml"
 
-    # This scenario leaves `privatebin_config_model` at its `filesystem`
-    # default, so the paste must exist as a file below the role's data path -
-    # which is a bind mount from the host into the container. Finding it here
-    # proves the storage backend in use and the bind mount at once.
-    - name: Stat the paste in the filesystem store
-      ansible.builtin.stat:
-        path: >-
-          {{
-            privatebin_verify_data_path
-            + '/' + privatebin_paste_created.json.id[0:2]
-            + '/' + privatebin_paste_created.json.id[2:4]
-            + '/' + privatebin_paste_created.json.id + '.php'
-          }}
-      register: privatebin_paste_file
+        # This scenario leaves `privatebin_config_model` at its `filesystem`
+        # default, so the paste must exist as a file below the role's data path -
+        # which is a bind mount from the host into the container. Finding it here
+        # proves the storage backend in use and the bind mount at once.
+        - name: Stat the paste in the filesystem store
+          ansible.builtin.stat:
+            path: >-
+              {{
+                privatebin_verify_data_path
+                + '/' + privatebin_paste_created.json.id[0:2]
+                + '/' + privatebin_paste_created.json.id[2:4]
+                + '/' + privatebin_paste_created.json.id + '.php'
+              }}
+          register: privatebin_paste_file
 
-    - name: Assert the paste was written to the filesystem store
-      ansible.builtin.assert:
-        that: privatebin_paste_file.stat.exists
-        fail_msg: >-
-          The paste was not written below {{ privatebin_verify_data_path }},
-          so the filesystem storage backend is not the one in use
-        success_msg: "The paste was written to the filesystem store on the host"
+        - name: Assert the paste was written to the filesystem store
+          ansible.builtin.assert:
+            that: privatebin_paste_file.stat.exists
+            fail_msg: >-
+              The paste was not written below {{ privatebin_verify_data_path }},
+              so the filesystem storage backend is not the one in use
+            success_msg: "The paste was written to the filesystem store on the host"
 
-    - name: Read the paste's file from the filesystem store
-      ansible.builtin.slurp:
-        src: "{{ privatebin_paste_file.stat.path }}"
-      register: privatebin_paste_file_content
+        - name: Read the paste's file from the filesystem store
+          ansible.builtin.slurp:
+            src: "{{ privatebin_paste_file.stat.path }}"
+          register: privatebin_paste_file_content
 
-    - name: Assert the file holds this paste's ciphertext
-      ansible.builtin.assert:
-        that: privatebin_verify_ct in (privatebin_paste_file_content.content | b64decode)
-        fail_msg: "{{ privatebin_paste_file.stat.path }} does not contain the ciphertext that was posted"
-        success_msg: "The file below {{ privatebin_verify_data_path }} holds this paste's ciphertext"
+        - name: Assert the file holds this paste's ciphertext
+          ansible.builtin.assert:
+            that: privatebin_verify_ct in (privatebin_paste_file_content.content | b64decode)
+            fail_msg: "{{ privatebin_paste_file.stat.path }} does not contain the ciphertext that was posted"
+            success_msg: "The file below {{ privatebin_verify_data_path }} holds this paste's ciphertext"
 
-    - name: Run the checks shared by all PrivateBin scenarios (check size limit enforcement)
-      ansible.builtin.include_tasks:
-        file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks_sizelimit.yml"
+        - name: Run the checks shared by all PrivateBin scenarios (check size limit enforcement)
+          ansible.builtin.include_tasks:
+            file: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}/molecule/verify_tasks_sizelimit.yml"
 
-    - name: Show the PrivateBin verification summary
-      ansible.builtin.debug:
-        msg:
-          - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
-          - "PrivateBin version: {{ privatebin_defaults.privatebin_version }}"
-          - "PrivateBin image: {{ privatebin_container_image_in_use.stdout | trim }}"
-          - "PrivateBin instance name: {{ privatebin_config_main_name }}"
-          - "PrivateBin paste: {{ privatebin_paste_created.json.id }}"
-          - "PrivateBin filesystem store: {{ privatebin_paste_file.stat.path }}"
+        - name: Show the PrivateBin verification summary
+          ansible.builtin.debug:
+            msg:
+              - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
+              - "PrivateBin version: {{ privatebin_defaults.privatebin_version }}"
+              - "PrivateBin image: {{ privatebin_container_image_in_use.stdout | trim }}"
+              - "PrivateBin instance name: {{ privatebin_config_main_name }}"
+              - "PrivateBin paste: {{ privatebin_paste_created.json.id }}"
+              - "PrivateBin filesystem store: {{ privatebin_paste_file.stat.path }}"
 
       rescue:
         # Whatever went wrong, the reason is almost always in the systemd service log.
