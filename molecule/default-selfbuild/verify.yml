@@ -45,6 +45,8 @@
       - 0
 
   tasks:
+    - name: Verify that PrivateBin works
+      block:
     - name: Wait for the PrivateBin systemd service to become active (up to 180s)
       ansible.builtin.systemd_service:
         name: privatebin.service
@@ -166,3 +168,19 @@
           - "PrivateBin instance name: {{ privatebin_config_main_name }}"
           - "PrivateBin paste: {{ privatebin_paste_created.json.id }}"
           - "PrivateBin filesystem store: {{ privatebin_paste_file.stat.path }}"
+
+      rescue:
+        # Whatever went wrong, the reason is almost always in the systemd service log.
+        - name: Retrieve the PrivateBin systemd service log
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=privatebin.service
+          register: privatebin_service_log
+          changed_when: false
+
+        - name: Show the PrivateBin systemd service log
+          ansible.builtin.debug:
+            var: privatebin_service_log.stdout_lines
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "PrivateBin verification failed. The systemd service log is printed above."
