@@ -44,50 +44,13 @@
       - 0
       - 0
 
+    privatebin_verify_units:
+      - privatebin.service
+      - postgres.service
+
   tasks:
     - name: Verify that PrivateBin works
       block:
-        - name: Wait for the Postgres systemd service to become active (up to 180s)
-          ansible.builtin.systemd_service:
-            name: postgres.service
-          register: privatebin_postgres_service
-          until: privatebin_postgres_service.status.ActiveState == 'active'
-          retries: 36
-          delay: 5
-          # So that giving up is reported by the assertion below rather than as a
-          # wall of systemd unit properties.
-          failed_when: false
-
-        - name: Wait for the PrivateBin systemd service to become active (up to 180s)
-          ansible.builtin.systemd_service:
-            name: privatebin.service
-          register: privatebin_service
-          until: privatebin_service.status.ActiveState == 'active'
-          retries: 36
-          delay: 5
-          # So that giving up is reported by the assertion below rather than as a
-          # wall of systemd unit properties.
-          failed_when: false
-
-        # `Restart=always` in the systemd unit means that even a container which crashes
-        # and gets restarted reads as active here, so this is a precondition rather than
-        # a result.
-        - name: Assert both services are active
-          ansible.builtin.assert:
-            that:
-              - privatebin_postgres_service.status.ActiveState == 'active'
-              - privatebin_service.status.ActiveState == 'active'
-            fail_msg: >-
-              postgres.service is {{ privatebin_postgres_service.status.ActiveState }},
-              privatebin.service is {{ privatebin_service.status.ActiveState }}
-            success_msg: "postgres.service and privatebin.service are active"
-
-        - name: Retrieve the PrivateBin systemd service log for debugging
-          when: privatebin_debug_service_enabled | bool
-          ansible.builtin.command:
-            cmd: journalctl --no-pager --output=cat --unit=privatebin.service
-          changed_when: false
-
         # The role is not included in this playbook, so its defaults are not in
         # scope. Reading defaults/main.yml directly ties the version assertion
         # below.
@@ -95,6 +58,36 @@
           ansible.builtin.include_vars:
             file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
             name: privatebin_defaults
+
+        - name: Wait for the PrivateBin systemd services to become active (up to 180s each)
+          ansible.builtin.systemd_service:
+            name: "{{ item }}"
+          register: privatebin_services
+          until: privatebin_services.status.ActiveState == 'active'
+          retries: 36
+          delay: 5
+          loop: "{{ privatebin_verify_units }}"
+          # So that giving up is reported by the assertion below rather than as a
+          # wall of systemd unit properties.
+          failed_when: false
+
+        # `Restart=always` in the systemd unit means that even a container which crashes
+        # and gets restarted reads as active here, so this is a precondition rather than
+        # a result.
+        - name: Assert the PrivateBin systemd services are active
+          ansible.builtin.assert:
+            that: privatebin_services.results | map(attribute='status.ActiveState') | unique | list == ['active']
+            fail_msg: >-
+              Not every service is active:
+              {{ dict(privatebin_verify_units | zip(privatebin_services.results | map(attribute='status.ActiveState'))) }}
+            success_msg: "Every systemd service is active"
+
+        - name: Retrieve the PrivateBin systemd services log for debugging
+          when: privatebin_debug_service_enabled | bool
+          ansible.builtin.command:
+            cmd: "journalctl --no-pager --output=cat --unit={{ item }}"
+          changed_when: false
+          loop: "{{ privatebin_verify_units }}"
 
         - name: Run the checks shared by all PrivateBin scenarios
           ansible.builtin.include_tasks:
@@ -161,14 +154,13 @@
         - name: Show the PrivateBin verification summary
           ansible.builtin.debug:
             msg:
-              - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
+              - "PrivateBin systemd: {% for unit, state in privatebin_verify_units | zip(privatebin_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
               - "PrivateBin version: {{ privatebin_defaults.privatebin_version }}"
               - "PrivateBin instance name: {{ privatebin_config_main_name }}"
               - "PrivateBin paste: {{ privatebin_paste_created.json.id }}"
               - "PrivateBin rows in Postgres: {{ privatebin_paste_db_row.stdout | trim }}"
               - "PrivateBin files below {{ privatebin_verify_data_path }}: {{ privatebin_data_path_contents.matched }}"
               - "PrivateBin size limit: {{ privatebin_paste_oversized.json.message | default('no message') }}"
-              - "Postgres systemd: {{ privatebin_postgres_service.status.ActiveState }}"
 
       rescue:
         # Whatever went wrong, the reason is almost always in the systemd service log.

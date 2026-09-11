@@ -44,35 +44,12 @@
       - 0
       - 0
 
+    privatebin_verify_units:
+      - privatebin.service
+
   tasks:
     - name: Verify that PrivateBin works
       block:
-        - name: Wait for the PrivateBin systemd service to become active (up to 180s)
-          ansible.builtin.systemd_service:
-            name: privatebin.service
-          register: privatebin_service
-          until: privatebin_service.status.ActiveState == 'active'
-          retries: 36
-          delay: 5
-          # So that giving up is reported by the assertion below rather than as a
-          # wall of systemd unit properties.
-          failed_when: false
-
-        # `Restart=always` in the systemd unit means that even a container which crashes
-        # and gets restarted reads as active here, so this is a precondition rather than
-        # a result.
-        - name: Assert the PrivateBin systemd service is active
-          ansible.builtin.assert:
-            that: privatebin_service.status.ActiveState == 'active'
-            fail_msg: "privatebin.service is not active ({{ privatebin_service.status.ActiveState }})"
-            success_msg: "privatebin.service is active"
-
-        - name: Retrieve the PrivateBin systemd service log for debugging
-          when: privatebin_debug_service_enabled | bool
-          ansible.builtin.command:
-            cmd: journalctl --no-pager --output=cat --unit=privatebin.service
-          changed_when: false
-
         # The role is not included in this playbook, so its defaults are not in
         # scope. Reading defaults/main.yml directly ties the version assertion
         # below.
@@ -80,6 +57,36 @@
           ansible.builtin.include_vars:
             file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
             name: privatebin_defaults
+
+        - name: Wait for the PrivateBin systemd services to become active (up to 180s each)
+          ansible.builtin.systemd_service:
+            name: "{{ item }}"
+          register: privatebin_services
+          until: privatebin_services.status.ActiveState == 'active'
+          retries: 36
+          delay: 5
+          loop: "{{ privatebin_verify_units }}"
+          # So that giving up is reported by the assertion below rather than as a
+          # wall of systemd unit properties.
+          failed_when: false
+
+        # `Restart=always` in the systemd unit means that even a container which crashes
+        # and gets restarted reads as active here, so this is a precondition rather than
+        # a result.
+        - name: Assert the PrivateBin systemd services are active
+          ansible.builtin.assert:
+            that: privatebin_services.results | map(attribute='status.ActiveState') | unique | list == ['active']
+            fail_msg: >-
+              Not every service is active:
+              {{ dict(privatebin_verify_units | zip(privatebin_services.results | map(attribute='status.ActiveState'))) }}
+            success_msg: "Every systemd service is active"
+
+        - name: Retrieve the PrivateBin systemd services log for debugging
+          when: privatebin_debug_service_enabled | bool
+          ansible.builtin.command:
+            cmd: "journalctl --no-pager --output=cat --unit={{ item }}"
+          changed_when: false
+          loop: "{{ privatebin_verify_units }}"
 
         - name: Determine the image the container was created from
           ansible.builtin.command:
@@ -162,7 +169,7 @@
         - name: Show the PrivateBin verification summary
           ansible.builtin.debug:
             msg:
-              - "PrivateBin systemd: {{ privatebin_service.status.ActiveState }}"
+              - "PrivateBin systemd: {% for unit, state in privatebin_verify_units | zip(privatebin_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
               - "PrivateBin version: {{ privatebin_defaults.privatebin_version }}"
               - "PrivateBin image: {{ privatebin_container_image_in_use.stdout | trim }}"
               - "PrivateBin instance name: {{ privatebin_config_main_name }}"
