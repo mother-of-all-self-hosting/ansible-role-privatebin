@@ -93,7 +93,7 @@ privatebin_database_mysql_password: 'some-password'
 privatebin_database_name: 'privatebin'
 ```
 
-You can also configure Data Source Name (DSN) with `privatebin_config_model_database_mysql_dsn`. See [`defaults/main.yml`](../defaults/main.yml) for its default value.
+You can also configure Data Source Name (DSN) with `privatebin_config_model_database_mysql_dsn`. Refer to [`defaults/main.yml`](../defaults/main.yml) for its default value.
 
 #### Postgres
 
@@ -115,7 +115,7 @@ privatebin_database_postgres_password: 'some-password'
 privatebin_database_name: 'privatebin'
 ```
 
-You can also configure Data Source Name (DSN) with `privatebin_config_model_database_postgres_dsn`. See [`defaults/main.yml`](../defaults/main.yml) for its default value.
+You can also configure Data Source Name (DSN) with `privatebin_config_model_database_postgres_dsn`. Refer to [`defaults/main.yml`](../defaults/main.yml) for its default value.
 
 #### Google Cloud Storage
 
@@ -280,7 +280,7 @@ privatebin_config_sri: |
 ```
 
 >[!NOTE]
-> SRI disables the instance to work if it is behind a reverse proxy which alters the assets for site loading optimization, such as CloudFlare. In this case, you need to change its configuration to bypass caching. See [this FAQ entry](https://github.com/PrivateBin/PrivateBin/wiki/FAQ#how-to-make-privatebin-work-when-using-cloudflare-for-ddos-protection) for details.
+> SRI disables the instance to work if it is behind a reverse proxy which alters the assets for site loading optimization, such as CloudFlare. In this case, you need to change its configuration to bypass caching. Refer to [this FAQ entry](https://github.com/PrivateBin/PrivateBin/wiki/FAQ#how-to-make-privatebin-work-when-using-cloudflare-for-ddos-protection) for details.
 
 ### Extending the configuration
 
