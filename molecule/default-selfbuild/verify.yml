@@ -90,7 +90,11 @@
 
         - name: Determine the image the container was created from
           ansible.builtin.command:
-            cmd: "docker inspect --format={{ '{{' }} .Config.Image {{ '}}' }} privatebin"
+            argv:
+              - docker
+              - inspect
+              - "--format={{ '{{' }} .Config.Image {{ '}}' }}"
+              - privatebin
           register: privatebin_container_image_in_use
           changed_when: false
 
@@ -112,7 +116,10 @@
 
         - name: List the images present on the host
           ansible.builtin.command:
-            cmd: "docker images --format={{ '{{' }} .Repository {{ '}}' }}"
+            argv:
+              - docker
+              - images
+              - "--format={{ '{{' }} .Repository {{ '}}' }}"
           register: privatebin_images_present
           changed_when: false
 
