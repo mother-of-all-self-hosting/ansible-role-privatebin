@@ -17,13 +17,11 @@
   retries: 120
   delay: 5
 
-# The image's own configuration names the instance "PrivateBin" and emits
-# `default-src 'none'` with no `sandbox` directive at all.
 - name: Assert the home page was rendered from the role's configuration
   ansible.builtin.assert:
     that:
       - "'<title>' ~ privatebin_config_main_name ~ '</title>' in privatebin_home_page.content"
-      - "'default-src &apos;self&apos;' in privatebin_home_page.content"
+      - "'default-src &apos;none&apos;' in privatebin_home_page.content"
       - "'sandbox allow-same-origin allow-scripts' in privatebin_home_page.content"
     fail_msg: >-
       The served page does not carry the configuration this role rendered
