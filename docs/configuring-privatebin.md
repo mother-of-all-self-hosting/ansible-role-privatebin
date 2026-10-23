@@ -222,14 +222,8 @@ PrivateBin includes templates (themes) for its UI. The default theme is `bootstr
 privatebin_config_main_template: bootstrap5
 ```
 
-Here are the available templates ([preview](https://github.com/PrivateBin/PrivateBin/wiki/Templates#templates-included-in-privatebin)):
+Here are the available templates (refer to <https://github.com/PrivateBin/PrivateBin/wiki/Configuration#template>):
 
-- bootstrap
-- bootstrap-page
-- bootstrap-dark
-- bootstrap-dark-page
-- bootstrap-compact
-- bootstrap-compact-page
 - bootstrap5
 
 ### Specify a URL shortener (optional)

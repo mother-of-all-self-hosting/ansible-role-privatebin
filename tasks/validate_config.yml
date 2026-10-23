@@ -48,8 +48,8 @@
 - name: Fail if PrivateBin defalult template is invalid
   ansible.builtin.fail:
     msg: >-
-      privatebin_config_main_template must be 'bootstrap', 'bootstrap-page', 'bootstrap-dark', 'bootstrap-dark-page', 'bootstrap-compact', 'bootstrap-compact-page', or 'bootstrap5'
-  when: "privatebin_config_main_template not in ['bootstrap', 'bootstrap-page', 'bootstrap-dark', 'bootstrap-dark-page', 'bootstrap-compact', 'bootstrap-compact-page', 'bootstrap5']"
+      privatebin_config_main_template must be 'bootstrap5'
+  when: "privatebin_config_main_template not in ['bootstrap5']"
 
 - name: Fail if PrivateBin identicon generator is invalid
   ansible.builtin.fail:

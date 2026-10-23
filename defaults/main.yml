@@ -271,8 +271,7 @@ privatebin_config_main_templateselection: false
 
 # Specify the template activated on the instance by default
 #
-# Valid values: bootstrap, bootstrap-page, bootstrap-dark, bootstrap-dark-page,
-# bootstrap-compact, bootstrap-compact-page, bootstrap5
+# Valid values: bootstrap5
 privatebin_config_main_template: bootstrap5
 
 # Specify the info text to display at the bottom right
