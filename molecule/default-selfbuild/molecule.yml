@@ -46,6 +46,7 @@ provisioner:
         privatebin_hostname: localhost
         privatebin_container_labels_traefik_enabled: false
         privatebin_container_http_host_bind_port: 8080
+        privatebin_config_model: filesystem
 
         # An unconfigured PrivateBin image serves a fully working instance of
         # its own, so the verification needs values that only a config.php

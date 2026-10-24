@@ -32,6 +32,7 @@
     - privatebin_hostname
     - privatebin_path_prefix
     - privatebin_container_network
+    - privatebin_config_model
 
 - name: Fail if PrivateBin default display mode is invalid
   ansible.builtin.fail:

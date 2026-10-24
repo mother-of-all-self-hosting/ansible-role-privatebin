@@ -63,6 +63,9 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 
 The role provides these storage backend options: local filesystem (default), MySQL, Postgres, SQLite, Google Cloud Storage, and Amazon S3.
 
+>[!NOTE]
+> If you (or your playbook) have not specified one explicitly, the storage for your existing installation is most likely to be `filesystem`.
+
 💡 If you are looking for Ansible roles for [MariaDB](https://mariadb.org/) and Postgres, you might be interested in [ansible-role-mariadb](https://github.com/mother-of-all-self-hosting/ansible-role-mariadb) and [ansible-role-postgres](https://github.com/mother-of-all-self-hosting/ansible-role-postgres) maintained by the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting) team.
 
 #### SQLite

@@ -411,7 +411,7 @@ privatebin_config_traffic_creators: ""
 # Also: https://github.com/PrivateBin/PrivateBin/blob/master/cfg/conf.sample.php
 #
 # Valid values: filesystem, gcs, mysql, postgres, sqlite, s3
-privatebin_config_model: filesystem
+privatebin_config_model: ""
 
 ########################################################################
 #                                                                      #
