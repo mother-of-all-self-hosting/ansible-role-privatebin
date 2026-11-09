@@ -65,8 +65,8 @@ provisioner:
         # role has ever had, so this scenario silently ran on the `filesystem`
         # default with MariaDB deployed alongside but never spoken to.
         privatebin_config_model: mysql
-        privatebin_database_mysql_username: my_database_username
-        privatebin_database_mysql_password: my_database_password
+        privatebin_database_mysql_username: /#@my_database_username?%
+        privatebin_database_mysql_password: /#@my_database_password?%
         privatebin_database_name: privatebin
         privatebin_database_mysql_socket_enabled: true
         privatebin_database_mysql_socket_path_host: "{{ mariadb_run_path }}"
