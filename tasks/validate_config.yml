@@ -29,9 +29,6 @@
   with_items:
     - privatebin_uid
     - privatebin_gid
-    - privatebin_hostname
-    - privatebin_path_prefix
-    - privatebin_container_network
     - privatebin_config_model
 
 - name: Fail if PrivateBin default display mode is invalid
